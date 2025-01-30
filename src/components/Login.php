@@ -49,7 +49,7 @@
                         if ($user && password_verify($password, $user['password'])) {
                             $_SESSION['user_id'] = $user['id'];
                             $_SESSION['user_name'] = $user['name'];
-                            header("Location: /dashboard.php");
+                            header("Location: /train/index.php");
                             exit();
                         } else {
                             $err = "Invalid email or password";
