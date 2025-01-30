@@ -10,6 +10,6 @@ try {
 } catch (mysqli_sql_exception $error) {
     echo $error . "Could Not connect";
 }
-if ($connection) {
-    echo "Connected successfully <br>";
-}
+// if ($connection) {
+//     echo "Connected successfully <br>";
+// }
