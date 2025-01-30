@@ -1,0 +1,21 @@
+
+// 🎨 Best Color Scheme for a Train Booking App
+// A train booking app should have a professional, modern, and user-friendly color palette. Here’s a well-balanced color scheme:
+
+// 🚆 Primary Colors (Branding & Main UI)
+// Royal Blue (#0055A5) - Trust & Reliability
+// Indian Red (#D32F2F) - Urgency (Bookings & Alerts)
+// Sunset Orange (#FF5722) - Call-to-Action (Book Now, Pay, etc.)
+
+
+// 🎨 Secondary Colors (Backgrounds & Highlights)
+// White Smoke (#F5F5F5) - Light Background
+// Deep Grey (#37474F) - Text & Buttons
+// Soft Yellow (#FFC107) - Highlights (Offers, Notifications)
+
+
+
+// 🌿 Accent Colors (Success, Warnings, Errors)
+// Success Green (#2E7D32) - Confirmed Bookings
+// Warning Amber (#FF9800) - Low Availability
+// Error Red (#C62828) - Payment Failure / Error Messages
