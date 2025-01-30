@@ -9,47 +9,38 @@
     <div class="w-[80%] bg-gray-200  h-screen">
         <div class="flex gap-8 m-auto justify-center items-center h-full">
             <div class="w-1/2 bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-2xl font-bold mb-6">Add Train</h2>
+                <h2 class="text-2xl font-bold mb-6">Add Stations</h2>
                 <form class="space-y-4" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                     <div>
-                        <label class="block text-gray-700">Train Name</label>
-                        <input type="text" name="train_name" placeholder="Train Name"
-                            class="<?php echo $train_name ? " border-red-500" : "border border-black" ?> relative
+                        <label class="block text-gray-700">Station Name</label>
+                        <input type="text" name="station_name" placeholder="Station Name"
+                            class="<?php echo $station_name ? " border-red-500" : "border border-black" ?> relative
                              w-full border rounded-md p-2 outline-none">
                     </div>
                     <div>
-                        <label class="block text-gray-700">Total Seats</label>
-                        <input type="number" name="total_seats" placeholder="Total Seats"
-                            class="<?php echo $total_seats ? "border-red-500" : "border border-black" ?> relative
+                        <label class="block text-gray-700">Location</label>
+                        <input type="text" name="location" placeholder="Location"
+                            class="<?php echo $location ? "border-red-500" : "border border-black" ?> relative
                              w-full border rounded-md p-2 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700">Status</label>
-                        <div class="flex items-center">
-                            <input type="radio" name="status" value="active" id="status_active" class="mr-2">
-                            <label for="status_active" class="mr-4">Active</label>
-                            <input type="radio" name="status" value="inactive" id="status_inactive" class="mr-2">
-                            <label for="status_inactive">Inactive</label>
-                        </div>
                     </div>
                     <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                        Sign Up
+                        Submit
                     </button>
                 </form>
 
                 <!-- Todo Post User Data -->
                 <?php
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    if (empty($_POST['train_name']) || empty($_POST['total_seats']) || empty($_POST['status'])) {
-                        $train_name = "* Train Name is required!";
-                        $total_seats = "* total_seats is required!";
-                        $status = "* status is required!";
+                    if (empty($_POST['station_name']) || empty($_POST['location'])) {
+                        $station_name = "* station Name is required!";
+                        $location = "* location is required!";
+                        // echo $location;
                     } else {
-                        $train_name = filter_input(INPUT_POST, 'train_name', FILTER_SANITIZE_SPECIAL_CHARS);
-                        $total_seats = filter_input(INPUT_POST, 'total_seats', FILTER_VALIDATE_INT);
-                        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+                        $station_name = filter_input(INPUT_POST, 'station_name', FILTER_SANITIZE_SPECIAL_CHARS);
+                        $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_SPECIAL_CHARS);
 
-                        $sql = "INSERT INTO trains (train_name, total_seats, status) VALUES ('$train_name', '$total_seats', '$status')";
+
+                        $sql = "INSERT INTO stations (station_name, location) VALUES ('$station_name', '$location')";
                         try {
                             $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
                             mysqli_query($connection, $sql);
