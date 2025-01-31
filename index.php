@@ -5,14 +5,14 @@
 session_start();
 include('constant/header.html');
 include('constant/sidebar.php');
-echo $_SESSION['user_name'];
+echo $_SESSION['user_role'] 
 
 ?>
 
 <body class=" flex flex-col min-h-screen  bg-cover bg-center bg-no-repeat">
     <!-- bg-[url('/train/assets/trainbackground.jpg')] ] -->
-    <div class="flex-grow flex flex-col justify-evenly items-center ">
-        <img src="/train/assets/Indian_Railways.png" alt="" class="w-[200px] h-[200px]">
+    <div class="flex-grow flex flex-col justify-center gap-5 items-center ">
+        <img src="/train/assets/Indian_Railways.png" alt="indian_railway" class="w-[200px] h-[200px]">
         <div class="bg-white w-full py-4 flex flex-col justify-center items-center relative">
 
 

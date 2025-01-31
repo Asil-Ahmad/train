@@ -48,9 +48,12 @@
                         $userData = mysqli_query($connection, $sql); //*Same like getting and setting data from userModal the database
                         $user = mysqli_fetch_assoc($userData); //*fetching the data from the database
 
+
                         if ($user && password_verify($password, $user['password'])) {
                             $_SESSION['user_id'] = $user['id'];
                             $_SESSION['user_name'] = $user['name'];
+                            $_SESSION['user_role'] = $user['role'];
+
                             header("Location: /train/index.php");
                             exit();
                         } else {
