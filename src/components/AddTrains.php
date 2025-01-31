@@ -116,6 +116,8 @@
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Train Name</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Total Seats</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Status</th>
+                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Live</th>
+                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,6 +131,12 @@
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_seats']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['status']) . "</td>";
+                                if ($row['status'] == 'active') {
+                                    echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span><span class='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span></span></td>";
+                                } else {
+                                    echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='relative inline-flex rounded-full h-3 w-3 bg-red-500'></span></span></td>";
+                                }
+                                echo "<td class='py-2 px-4 border-b border-gray-200'>-</td>";
                                 echo "</tr>";
                             }
                         } else {
