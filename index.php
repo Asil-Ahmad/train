@@ -5,7 +5,6 @@
 session_start();
 include('constant/header.html');
 include('constant/sidebar.php');
-echo $_SESSION['user_role'] 
 
 ?>
 

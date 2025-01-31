@@ -1,6 +1,6 @@
 <?php
 session_start();
-// echo isset($_SESSION['user_id']) ? header('Location: /train/index.php') : '';
+// echo $_SESSION['user_role'] == 'admin' ? "isAdmin" : 'isUser';
 ?>
 
 <nav class="bg-[#F5F5F5]">
@@ -11,36 +11,37 @@ session_start();
     <!-- <img src="/train/assets/train.png" alt="testx" class="invert" /> -->
   </div>
   <div
-    class="flex py-4 justify-center items-center gap-1 bg-[#F5F5F5] text-[#37474F] text-md font-fine">
+    class="flex py-4 justify-end gap-1 bg-[#F5F5F5] text-[#37474F] text-sm font-fine">
     <a
-      class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1"
+      class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
       href="/train/index.php">Dashboard</a>
+<!-- Todo If user is admin then see these routes else no -->
+    <?php
+    if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin') {
+      echo '
+  <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/AddTrains.php">Add Trains</a>
+  <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/AddStations.php">Add Stations</a>
+  <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/Routes.php">Add Routes</a>';
+    }
+    ?>
+
     <a
-      class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1"
-      href="/train/src/components/AddTrains.php">Add Trains</a>
-    <a
-      class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1"
-      href="/train/src/components/AddStations.php">Add Stations</a>
-    <a
-      class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1"
-      href="/train/src/components/Routes.php">Add Routes</a>
-    <a
-      class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1"
+      class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
       href="/train/src/components/BookTicket.php">Book Ticket</a>
 
     <?php
     echo isset($_SESSION['user_id'])
-      ? '<a class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1" href="/train/src/components/Logout.php">Logout</a>'
-      : '<a class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1" href="/train/src/components/Login.php">Login</a>';
+      ? '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/Logout.php">Logout</a>'
+      : '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/Login.php">Login</a>';
     ?>
 
-    
+
     <?php
     echo empty($_SESSION['user_id']) ? '<a
-        class="border-b-2 border-transparent hover:border-[#0055A5] w-full px-10 py-1"
+        class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
         href="/train/src/components/CreateAccount.php">Sign Up</a>' :
 
-      '<a class="flex items-center gap-2 border-b-2 border-transparent hover:border-[#0055A5] w-full " href="#">
+      '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="#">
           <div class="flex items-center gap-1">
               <p class="w-6 h-6 text-center content-center bg-black text-white rounded-full">A</p>
               <span class="font-semibold">' . $_SESSION['user_name'] . '</span>
