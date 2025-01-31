@@ -43,7 +43,7 @@ session_start();
 
       '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="#">
           <div class="flex items-center gap-1">
-              <p class="w-6 h-6 text-center content-center bg-black text-white rounded-full">A</p>
+              <p class="w-6 h-6 text-center content-center bg-[#0055A5] text-white rounded-full">A</p>
               <span class="font-semibold">' . $_SESSION['user_name'] . '</span>
           </div>
       </a>';

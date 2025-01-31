@@ -120,7 +120,7 @@
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-sm">
                         <?php
                         $sql = "SELECT * FROM trains";
                         $result = mysqli_query($connection, $sql);
