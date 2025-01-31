@@ -1,12 +1,12 @@
-<div class="flex">
+<div class="">
     <?php
     session_start();
     include('../../constant/header.html');
-    include('../../constant/sidebar.html');
+    include('../../constant/sidebar.php');
     include('../../config/database.php');
     ?>
 
-    <div class="w-[80%] bg-gray-200 h-screen">
+    <div class=" bg-gray-200 h-screen">
         <div class="flex gap-8 m-auto justify-center items-center h-full">
             <div class="w-1/2 bg-white rounded-lg shadow-lg p-6">
                 <h2 class="text-2xl font-bold mb-6">Book Ticket</h2>

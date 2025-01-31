@@ -1,37 +1,40 @@
 <?php
 // Include PHPMailer files
-// require '../phpmailer/src/PHPMailer.php';
-// require '../phpmailer/src/SMTP.php';
-// require '../phpmailer/src/Exception.php';
+require '../phpmailer/src/PHPMailer.php';
+require '../phpmailer/src/SMTP.php';
+require '../phpmailer/src/Exception.php';
 
-// // Function to send email
-// function sendEmail($toEmail, $subject, $body)
-// {
-//     $mail = new PHPMailer(true);
+// Load environment variables
+$env = parse_ini_file(__DIR__ . '/.env');
 
-//     try {
-//         // Server settings
-//         $mail->isSMTP();
-//         $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP server
-//         $mail->SMTPAuth = true;
-//         $mail->Username = 'your-email@example.com'; // Replace with your email
-//         $mail->Password = 'your-email-password'; // Replace with your email password
-//         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-//         $mail->Port = 587;
+// Function to send email
+function sendEmail($toEmail, $subject, $body)
+{
+    $mail = new PHPMailer(true);
 
-//         // Recipients
-//         $mail->setFrom('your-email@example.com', 'Your Name'); // Replace with your email and name
-//         $mail->addAddress($toEmail);
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = $env['SMTP_HOST'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $env['SMTP_USER'];
+        $mail->Password = $env['SMTP_PASS'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = $env['SMTP_PORT'];
 
-//         // Content
-//         $mail->isHTML(true);
-//         $mail->Subject = $subject;
-//         $mail->Body    = $body;
+        // Recipients
+        $mail->setFrom($env['SMTP_USER'], 'Your Name');
+        $mail->addAddress($toEmail);
 
-//         $mail->send();
-//         return true;
-//     } catch (Exception $e) {
-//         error_log("Mailer Error: {$mail->ErrorInfo}");
-//         return false;
-//     }
-// }
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = $body;
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Mailer Error: {$mail->ErrorInfo}");
+        return false;
+    }
+}

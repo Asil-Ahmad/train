@@ -2,7 +2,7 @@
     <?php
     session_start();
     include('../../constant/header.html');
-    include('../../constant/sidebar.html');
+    include('../../constant/sidebar.php');
     include('../../config/database.php');
     ?>
 

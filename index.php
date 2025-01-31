@@ -4,8 +4,9 @@
 <?php
 session_start();
 include('constant/header.html');
-include('constant/sidebar.html');
+include('constant/sidebar.php');
 echo $_SESSION['user_name'];
+
 ?>
 
 <body class=" flex flex-col min-h-screen  bg-cover bg-center bg-no-repeat">

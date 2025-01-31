@@ -2,7 +2,7 @@
     <?php
     session_start();
     include('../../constant/header.html');
-    include('../../constant/sidebar.html');
+    include('../../constant/sidebar.php');
     include('../../config/database.php');
     ?>
 
@@ -63,6 +63,19 @@
             }
             ?>
             <!-- Todo Toast Notification -->
+            <?php if (isset($success)): ?>
+                <div id="successToast" class="fixed top-4 right-4 p-4 bg-green-50 rounded-lg shadow-lg transition-opacity duration-500">
+                    <p class="text-green-600 text-sm"><?php echo $success; ?></p>
+                </div>
+                <script>
+                    setTimeout(() => {
+                        document.getElementById('successToast').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('successToast').style.display = 'none';
+                        }, 500);
+                    }, 3000);
+                </script>
+            <?php endif; ?>
             <?php if (isset($err)): ?>
                 <div id="errorToast" class="fixed top-4 right-4 p-4 bg-red-50 rounded-lg shadow-lg transition-opacity duration-500">
                     <p class="text-red-600 text-sm"><?php echo $err; ?></p>
