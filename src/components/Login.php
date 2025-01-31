@@ -33,18 +33,20 @@
 
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                //*if empty show error
                 if (empty($_POST['email']) || empty($_POST['password'])) {
                     $email = empty($_POST['email']) ? "Email is required" : "";
                     $password = empty($_POST['password']) ? "Password is required" : "";
                 } else {
+                    //*if not empty filter the input
                     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
                     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
 
                     $sql = "SELECT * FROM users WHERE email = '$email'";
                     try {
                         $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
-                        $result = mysqli_query($connection, $sql);
-                        $user = mysqli_fetch_assoc($result);
+                        $userData = mysqli_query($connection, $sql); //*Same like getting and setting data from userModal the database
+                        $user = mysqli_fetch_assoc($userData); //*fetching the data from the database
 
                         if ($user && password_verify($password, $user['password'])) {
                             $_SESSION['user_id'] = $user['id'];
