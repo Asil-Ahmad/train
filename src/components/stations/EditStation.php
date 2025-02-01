@@ -9,7 +9,7 @@
     ?>
 
     <!-- Main Content Wrapper -->
-    <div class="flex items-start px-4">
+    <div class="flex items-center justify-center px-4">
         <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Edit Station</h2>
             <?php
@@ -18,22 +18,39 @@
                 $sql = "SELECT * FROM stations WHERE station_id = $station_id";
                 $result = mysqli_query($connection, $sql);
                 if ($row = mysqli_fetch_assoc($result)) {
+                    $station_code = $row['station_code'];
                     $station_name = $row['station_name'];
+                    $address = $row['address'];
+                    $city = $row['city'];
                 } else {
                     echo "<p class='text-red-500 text-center'>Station not found</p>";
                 }
             }
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $errors = [];
+
+                if (empty($_POST['station_code'])) {
+                    $errors['station_code'] = "Station code is required";
+                } else {
+                    $station_code = filter_input(INPUT_POST, 'station_code', FILTER_SANITIZE_SPECIAL_CHARS);
+                }
+
                 if (empty($_POST['station_name'])) {
-                    $station_name_err = "Station name is required";
+                    $errors['station_name'] = "Station name is required";
                 } else {
                     $station_name = filter_input(INPUT_POST, 'station_name', FILTER_SANITIZE_SPECIAL_CHARS);
+                }
 
-                    $sql = "UPDATE stations SET station_name = '$station_name' WHERE station_id = $station_id";
+                $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_SPECIAL_CHARS);
+                $city = filter_input(INPUT_POST, 'city', FILTER_SANITIZE_SPECIAL_CHARS);
+
+                if (empty($errors)) {
+                    $sql = "UPDATE stations SET station_code = '$station_code', station_name = '$station_name', address = '$address', city = '$city' WHERE station_id = $station_id";
                     try {
                         mysqli_query($connection, $sql);
                         $success = "Station updated successfully!";
+                        echo "<input type='hidden' id='successMessage' value='$success'>";
                     } catch (mysqli_sql_exception $error) {
                         $err = $error->getMessage();
                     }
@@ -42,10 +59,28 @@
             ?>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=$station_id"; ?>" method="POST">
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Station Code</label>
+                    <input type="text" name="station_code" value="<?php echo isset($station_code) ? htmlspecialchars($station_code) : ''; ?>" placeholder="Enter station code"
+                        class="<?php echo isset($errors['station_code']) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <?php if (isset($errors['station_code'])) echo "<p class='text-red-500 text-xs mt-1'>{$errors['station_code']}</p>"; ?>
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Station Name</label>
                     <input type="text" name="station_name" value="<?php echo isset($station_name) ? htmlspecialchars($station_name) : ''; ?>" placeholder="Enter station name"
-                        class="<?php echo isset($station_name_err) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
-                    <?php if (isset($station_name_err)) echo "<p class='text-red-500 text-xs mt-1'>$station_name_err</p>"; ?>
+                        class="<?php echo isset($errors['station_name']) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <?php if (isset($errors['station_name'])) echo "<p class='text-red-500 text-xs mt-1'>{$errors['station_name']}</p>"; ?>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                    <input type="text" name="address" value="<?php echo isset($address) ? htmlspecialchars($address) : ''; ?>" placeholder="Enter address"
+                        class="<?php echo isset($errors['address']) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <?php if (isset($errors['address'])) echo "<p class='text-red-500 text-xs mt-1'>{$errors['address']}</p>"; ?>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                    <input type="text" name="city" value="<?php echo isset($city) ? htmlspecialchars($city) : ''; ?>" placeholder="Enter city"
+                        class="<?php echo isset($errors['city']) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <?php if (isset($errors['city'])) echo "<p class='text-red-500 text-xs mt-1'>{$errors['city']}</p>"; ?>
                 </div>
 
                 <button type="submit"
@@ -53,44 +88,19 @@
                     Update Station
                 </button>
             </form>
+        </div>
 
-            <?php
-            if (isset($success)) {
-                echo "<p class='text-green-500 text-center'>$success</p>";
-            } elseif (isset($err)) {
-                echo "<p class='text-red-500 text-center'>$err</p>";
-            }
-            include('../../../constant/alerts.php');
-            ?>
-        </div>
-        <div class="flex flex-1 justify-center items-center px-4 ">
-            <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-8">
-                <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Stations</h2>
-                <table class="min-w-full bg-white">
-                    <thead>
-                        <tr>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Station Name</th>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                        <?php
-                        $sql = "SELECT * FROM stations";
-                        $result = mysqli_query($connection, $sql);
-                        if (mysqli_num_rows($result) > 0) {
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<tr>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['station_name']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'><a href='UpdateTrain.php?id=" . $row['station_id'] . "' class='text-blue-500 hover:text-blue-700'>Edit</a></td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='2' class='py-2 px-4 border-b border-gray-200 text-center'>No stations found</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            setTimeout(function() {
+                window.location.href = '/train/src/components/stations/AddStations.php'; // Redirect to the previous page
+            }, 3000); // 3 seconds delay
+        }
+    });
+</script>
