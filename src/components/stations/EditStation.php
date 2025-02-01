@@ -1,9 +1,9 @@
 <div class="flex flex-col min-h-screen bg-[#F5F5F5]">
     <?php
     session_start();
-    include('../../constant/header.html');
-    include('../../constant/sidebar.php');
-    include('../../config/database.php');
+    include('../../../constant/header.html');
+    include('../../../constant/sidebar.php');
+    include('../../../config/database.php');
     // Create a database connection
     $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
     ?>
@@ -60,7 +60,7 @@
             } elseif (isset($err)) {
                 echo "<p class='text-red-500 text-center'>$err</p>";
             }
-            include('../../constant/alerts.php');
+            include('../../../constant/alerts.php');
             ?>
         </div>
         <div class="flex flex-1 justify-center items-center px-4 ">
