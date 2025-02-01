@@ -6,7 +6,7 @@
     include('../../../config/database.php');
 
     $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
-    $train_sql = "SELECT train_id, train_name FROM trains";
+    $train_sql = "SELECT train_id, train_name FROM trains WHERE status = 'active'";
     $train_result = mysqli_query($connection, $train_sql);
 
     // Fetch station names and IDs
@@ -56,11 +56,13 @@
                             if (isset($_POST['start_station']) && $_POST['start_station'] == $station_row['station_id']) {
                                 continue;
                             }
-                            echo "<option value='" . $station_row['station_id'] . "'>" . htmlspecialchars($station_row['station_name']) . "</option>";
+                            continue;
                         }
+                        echo "<option value='" . $station_row['station_id'] . "'>" . htmlspecialchars($station_row['station_name']) . "</option>";
+
                         ?>
                     </select>
-                    <?php if (isset($end_station) && is_string($end_station)) echo "<p class='text-red-500 text-xs mt-1'>$end_station</p>"; ?>
+                    <?php  echo "<p class='text-red-500 text-xs mt-1'>$end_station</p>"; ?>
                 </div>
 
 
