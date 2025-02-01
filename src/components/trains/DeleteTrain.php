@@ -1,6 +1,6 @@
 <?php
 // Include database connection file
-include '../../config/database.php';
+include('../../../config/database.php');
 
 // Create a database connection
 $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);

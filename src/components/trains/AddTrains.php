@@ -1,9 +1,9 @@
 <div class="flex flex-col min-h-screen bg-[#F5F5F5]">
     <?php
     session_start();
-    include('../../constant/header.html');
-    include('../../constant/sidebar.php');
-    include('../../config/database.php');
+    include('../../../constant/header.html');
+    include('../../../constant/sidebar.php');
+    include('../../../config/database.php');
 
     ?>
 
