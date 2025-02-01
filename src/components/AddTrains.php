@@ -4,6 +4,7 @@
     include('../../constant/header.html');
     include('../../constant/sidebar.php');
     include('../../config/database.php');
+
     ?>
 
     <!-- Main Content Wrapper -->
@@ -76,35 +77,8 @@
                     }
                 }
             }
+            include('../../constant/alerts.php');
             ?>
-
-            <?php if (isset($success)): ?>
-                <div id="successToast" class="fixed top-4 right-4 p-4 bg-green-50 rounded-lg shadow-lg transition-opacity duration-500">
-                    <p class="text-green-600 text-sm"><?php echo $success; ?></p>
-                </div>
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('successToast').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('successToast').style.display = 'none';
-                        }, 500);
-                    }, 3000);
-                </script>
-            <?php endif; ?>
-
-            <?php if (isset($err)): ?>
-                <div id="errorToast" class="fixed top-4 right-4 p-4 bg-red-50 rounded-lg shadow-lg transition-opacity duration-500">
-                    <p class="text-red-600 text-sm"><?php echo $err; ?></p>
-                </div>
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('errorToast').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('errorToast').style.display = 'none';
-                        }, 500);
-                    }, 8000);
-                </script>
-            <?php endif; ?>
         </div>
         <div class="flex flex-1 justify-center items-center px-4 ">
             <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-8">
@@ -136,11 +110,12 @@
                                 } else {
                                     echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='relative inline-flex rounded-full h-3 w-3 bg-red-500'></span></span></td>";
                                 }
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>-</td>";
+                                //* Add a delete button with a link to delete the train_id
+                                echo "<td class='py-2 px-4 border-b border-gray-200'><a href='DeleteTrain.php?id=" . $row['train_id'] . "' class='text-red-500 hover:text-red-700'>Delete</a></td>";
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='4' class='py-2 px-4 border-b border-gray-200 text-center'>No trains found</td></tr>";
+                            echo "<tr><td colspan='6' class='py-2 px-4 border-b border-gray-200 text-center'>No trains found</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -149,4 +124,3 @@
         </div>
     </div>
 </div>
-<!-- List of Trains -->
