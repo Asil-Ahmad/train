@@ -1,11 +1,10 @@
 <div class="flex flex-col min-h-screen bg-[#F5F5F5]">
     <?php
     session_start();
-    include('../../constant/header.html');
-    include('../../constant/sidebar.php');
-    include('../../config/database.php');
+    include('../../../constant/header.html');
+    include('../../../constant/sidebar.php');
+    include('../../../config/database.php');
 
-    // Fetch train names and IDs
     $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
     $train_sql = "SELECT train_id, train_name FROM trains";
     $train_result = mysqli_query($connection, $train_sql);
@@ -14,14 +13,13 @@
     $station_sql = "SELECT station_id, station_name FROM stations";
     $station_result = mysqli_query($connection, $station_sql);
     ?>
-
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
         <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Add Route</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Train ID</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Train Name</label>
                     <select name="train_id" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 transition-all">
                         <option value="">Select Train</option>
                         <?php
@@ -32,10 +30,9 @@
                     </select>
                     <?php if (isset($train_id) && is_string($train_id)) echo "<p class='text-red-500 text-xs mt-1'>$train_id</p>"; ?>
                 </div>
-
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Station ID</label>
-                    <select name="start_station" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 transition-all">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Station</label>
+                    <select name="start_station" id="start_station" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 transition-all">
                         <option value="">Select Start Station</option>
                         <?php
                         while ($station_row = mysqli_fetch_assoc($station_result)) {
@@ -47,18 +44,25 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">End Station ID</label>
-                    <select name="end_station" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 transition-all">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">End Station</label>
+                    <select name="end_station" id="end_station" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 transition-all">
                         <option value="">Select End Station</option>
                         <?php
-                        mysqli_data_seek($station_result, 0); // Reset the result pointer to reuse the result set
+                        // Reset MySQL result pointer to fetch stations again
+                        mysqli_data_seek($station_result, 0);
+
                         while ($station_row = mysqli_fetch_assoc($station_result)) {
+                            // Skip the selected start station
+                            if (isset($_POST['start_station']) && $_POST['start_station'] == $station_row['station_id']) {
+                                continue;
+                            }
                             echo "<option value='" . $station_row['station_id'] . "'>" . htmlspecialchars($station_row['station_name']) . "</option>";
                         }
                         ?>
                     </select>
                     <?php if (isset($end_station) && is_string($end_station)) echo "<p class='text-red-500 text-xs mt-1'>$end_station</p>"; ?>
                 </div>
+
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label>
@@ -84,7 +88,7 @@
                     $train_id = filter_input(INPUT_POST, 'train_id', FILTER_SANITIZE_NUMBER_INT);
                     $start_station = filter_input(INPUT_POST, 'start_station', FILTER_SANITIZE_NUMBER_INT);
                     $end_station = filter_input(INPUT_POST, 'end_station', FILTER_SANITIZE_NUMBER_INT);
-                    $distance_km = filter_input(INPUT_POST, 'distance_km', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                    $distance_km = filter_input(INPUT_POST, 'distance_km', FILTER_SANITIZE_NUMBER_INT);
 
                     $sql = "INSERT INTO routes (train_id, source_id, destination_id, distance) VALUES ('$train_id', '$start_station', '$end_station', '$distance_km')";
                     try {
