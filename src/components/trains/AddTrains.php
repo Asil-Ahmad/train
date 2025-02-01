@@ -77,7 +77,7 @@
                     }
                 }
             }
-            include('../../constant/alerts.php');
+            include('../../../constant/alerts.php');
             ?>
         </div>
         <div class="flex flex-1 justify-center items-center px-4 ">
@@ -102,7 +102,7 @@
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_number']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
+                                echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_seats']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['status']) . "</td>";
                                 if ($row['status'] == 'active') {
@@ -111,7 +111,10 @@
                                     echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='relative inline-flex rounded-full h-3 w-3 bg-red-500'></span></span></td>";
                                 }
                                 //* Add a delete button with a link to delete the train_id
-                                echo "<td class='py-2 px-4 border-b border-gray-200'><a href='DeleteTrain.php?id=" . $row['train_id'] . "' class='text-red-500 hover:text-red-700'>Delete</a></td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200 flex gap-2'>
+                                <a href='EditTrain.php?id=" . $row['train_id'] . "' class='bg-[#2E7D32] text-white hover:bg-green-700 px-2 py-0.5 font-medium'>Edit</a>
+                                <a href='DeleteTrain.php?id=" . $row['train_id'] . "' class='text-white bg-[#D32F2F] hover:bg-red-700 px-2 py-0.5 font-medium'>Delete</a>
+                                </td>";
                                 echo "</tr>";
                             }
                         } else {
