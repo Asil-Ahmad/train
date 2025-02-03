@@ -83,6 +83,7 @@
                     $start_station = "Start Station ID is required";
                     $end_station = "End Station ID is required";
                     $distance_km = "Distance is required";
+                    $err = "Please fill all the fields";
                 } else {
                     $train_id = filter_input(INPUT_POST, 'train_id', FILTER_SANITIZE_NUMBER_INT);
                     $start_station = filter_input(INPUT_POST, 'start_station', FILTER_SANITIZE_NUMBER_INT);
@@ -99,7 +100,7 @@
                     }
                 }
             }
-            include('../../constant/alerts.php');
+            include('../../../constant/alerts.php');
             ?>
         </div>
         <div class="flex flex-1 justify-center items-center px-4 ">
@@ -126,11 +127,15 @@
                         if (mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['start_station_name']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['end_station_name']) . "</td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['train_name']) . "</td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['start_station_name']) . "</td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['end_station_name']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['distance']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'><a href='DeleteRoute.php?id=" . $row['route_id'] . "' class='text-red-500 hover:text-red-700'>Delete</a></td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200 flex gap-2'>
+                                <a href='EditRoute.php?id=" . $row['route_id'] . "' class='bg-[#2E7D32] text-white hover:bg-green-700 px-2 py-0.5 font-medium'>Edit</a>
+                                <a href='DeleteRoute.php?id=" . $row['route_id'] . "' class='text-white bg-[#D32F2F] hover:bg-red-700 px-2 py-0.5 font-medium'>Delete</a>
+                                </td>";
+                                echo "</tr>";
                                 echo "</tr>";
                             }
                         } else {
