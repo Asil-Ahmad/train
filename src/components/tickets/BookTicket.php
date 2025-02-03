@@ -161,7 +161,7 @@
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['seat_number']) . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['ticket_price']) . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['distance']) . "</td>";
-                                    echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['status']) . "</td>";
+                                    echo "<td class='py-2 px-4 border-b border-gray-200 capitalize'>" . htmlspecialchars($row['status']) . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['payment_method']) . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['transaction_id']) . "</td>";
                                     echo "</tr>";
