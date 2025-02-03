@@ -34,6 +34,13 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Base Price</label>
+                    <input type="number" name="base_price" placeholder="Enter base price"
+                        class="<?php echo isset($base_price) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <?php if (isset($base_price) && is_string($base_price)) echo "<p class='text-red-500 text-xs mt-1'>$base_price</p>"; ?>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center">
@@ -56,18 +63,20 @@
 
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (empty($_POST['train_number']) || empty($_POST['train_name']) || empty($_POST['total_seats']) || empty($_POST['status'])) {
+                if (empty($_POST['train_number']) || empty($_POST['train_name']) || empty($_POST['total_seats']) || empty($_POST['base_price']) || empty($_POST['status'])) {
                     $train_number = "Train number is required";
                     $train_name = "Train name is required";
                     $total_seats = "Total seats is required";
+                    $base_price = "Base price is required";
                     $status = "Status is required";
                 } else {
                     $train_number = filter_input(INPUT_POST, 'train_number', FILTER_SANITIZE_SPECIAL_CHARS);
                     $train_name = filter_input(INPUT_POST, 'train_name', FILTER_SANITIZE_SPECIAL_CHARS);
                     $total_seats = filter_input(INPUT_POST, 'total_seats', FILTER_VALIDATE_INT);
+                    $base_price = filter_input(INPUT_POST, 'base_price', FILTER_VALIDATE_FLOAT);
                     $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
 
-                    $sql = "INSERT INTO trains (train_number, train_name, total_seats, status) VALUES ('$train_number', '$train_name', '$total_seats', '$status')";
+                    $sql = "INSERT INTO trains (train_number, train_name, total_seats, base_price, status) VALUES ('$train_number', '$train_name', '$total_seats', '$base_price', '$status')";
                     try {
                         $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
                         mysqli_query($connection, $sql);
@@ -89,6 +98,7 @@
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Train Number</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Train Name</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Total Seats</th>
+                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Base Price</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Status</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Live</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
@@ -104,13 +114,13 @@
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_number']) . "</td>";
                                 echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_seats']) . "</td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['base_price']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['status']) . "</td>";
                                 if ($row['status'] == 'active') {
                                     echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span><span class='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span></span></td>";
                                 } else {
                                     echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='relative inline-flex rounded-full h-3 w-3 bg-red-500'></span></span></td>";
                                 }
-                                //* Add a delete button with a link to delete the train_id
                                 echo "<td class='py-2 px-4 border-b border-gray-200 flex gap-2'>
                                 <a href='EditTrain.php?id=" . $row['train_id'] . "' class='bg-[#2E7D32] text-white hover:bg-green-700 px-2 py-0.5 font-medium'>Edit</a>
                                 <a href='DeleteTrain.php?id=" . $row['train_id'] . "' class='text-white bg-[#D32F2F] hover:bg-red-700 px-2 py-0.5 font-medium'>Delete</a>
@@ -118,7 +128,7 @@
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='6' class='py-2 px-4 border-b border-gray-200 text-center'>No trains found</td></tr>";
+                            echo "<tr><td colspan='7' class='py-2 px-4 border-b border-gray-200 text-center'>No trains found</td></tr>";
                         }
                         ?>
                     </tbody>

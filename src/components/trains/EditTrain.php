@@ -18,11 +18,12 @@
         $train_name = filter_input(INPUT_POST, 'train_name', FILTER_SANITIZE_SPECIAL_CHARS);
         $total_seats = filter_input(INPUT_POST, 'total_seats', FILTER_VALIDATE_INT);
         $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+        $base_price = filter_input(INPUT_POST, 'base_price', FILTER_VALIDATE_FLOAT);
 
-        if (empty($train_number) || empty($train_name) || empty($total_seats) || empty($status)) {
+        if (empty($train_number) || empty($train_name) || empty($total_seats) || empty($status) || empty($base_price)) {
             $error = "All fields are required";
         } else {
-            $sql = "UPDATE trains SET train_number='$train_number', train_name='$train_name', total_seats='$total_seats', status='$status' WHERE train_id=$train_id";
+            $sql = "UPDATE trains SET train_number='$train_number', train_name='$train_name', total_seats='$total_seats', status='$status', base_price='$base_price' WHERE train_id=$train_id";
             try {
                 mysqli_query($connection, $sql);
                 $success = "Train updated successfully!";
@@ -55,6 +56,12 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Total Seats</label>
                     <input type="number" name="total_seats" value="<?php echo htmlspecialchars($train['total_seats']); ?>" placeholder="Enter total seats"
+                        class="w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Base Price</label>
+                    <input type="number" step="0.01" name="base_price" value="<?php echo htmlspecialchars($train['base_price']); ?>" placeholder="Enter base price"
                         class="w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
                 </div>
 
