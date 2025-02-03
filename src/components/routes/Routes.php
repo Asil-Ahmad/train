@@ -56,15 +56,12 @@
                             if (isset($_POST['start_station']) && $_POST['start_station'] == $station_row['station_id']) {
                                 continue;
                             }
-                            continue;
+                            echo "<option value='" . $station_row['station_id'] . "'>" . htmlspecialchars($station_row['station_name']) . "</option>";
                         }
-                        echo "<option value='" . $station_row['station_id'] . "'>" . htmlspecialchars($station_row['station_name']) . "</option>";
-
                         ?>
                     </select>
-                    <?php  echo "<p class='text-red-500 text-xs mt-1'>$end_station</p>"; ?>
+                    <?php if (isset($end_station) && is_string($end_station)) echo "<p class='text-red-500 text-xs mt-1'>$end_station</p>"; ?>
                 </div>
-
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label>
