@@ -27,7 +27,7 @@ session_start();
 
     <a
       class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
-      href="/train/src/components/BookTicket.php">Book Ticket</a>
+      href="/train/src/components/tickets/BookTicket.php">Book Ticket</a>
 
     <?php
     echo isset($_SESSION['user_id'])
