@@ -1,4 +1,4 @@
-<div class="flex flex-col min-h-screen bg-[#F5F5F5]">
+<div class="flex flex-col sm:min-h-screen h-full bg-[#F5F5F5]">
     <?php
     session_start();
     include('../../../constant/header.html');
@@ -8,7 +8,7 @@
     ?>
 
     <!-- Main Content Wrapper -->
-    <div class="flex items-start px-4">
+    <div class="flex sm:flex-row flex-col sm:gap-0 gap-5  items-start sm:px-4 px-0">
         <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Add Train</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
@@ -80,7 +80,7 @@
             include('../../../constant/alerts.php');
             ?>
         </div>
-        <div class="flex flex-1 justify-center items-center px-4 ">
+        <div class="flex flex-1 justify-center items-center sm:px-4 px-0 ">
             <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-8">
                 <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Trains</h2>
                 <table class="min-w-full bg-white">
