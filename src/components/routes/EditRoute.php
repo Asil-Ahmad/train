@@ -112,6 +112,7 @@
                         $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
                         mysqli_query($connection, $sql);
                         $success = $route_id ? "Route updated successfully!" : "Route added successfully!";
+                        echo "<input type='hidden' id='successMessage' value='$success'>";
                     } catch (mysqli_sql_exception $error) {
                         $err = $error->getMessage();
                     }
@@ -123,7 +124,7 @@
     </div>
 </div>
 
-<!-- TODO THIS ADD CONFIRMATION IF LEAVE WITHOUT SAVE -->
+<!-- TODO THIS ADD CONFIRMATION IF LEAVE WITHOUT -->
 <script>
     let formModified = false;
 
@@ -141,5 +142,14 @@
 
     document.getElementById('routeForm').addEventListener('submit', function() {
         formModified = false;
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            setTimeout(function() {
+                window.location.href = '/train/src/components/routes/Routes.php'; // Redirect to the previous page
+            }, 1000); // 3 seconds delay
+        }
     });
 </script>
