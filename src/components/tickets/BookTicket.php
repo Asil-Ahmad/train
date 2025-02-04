@@ -151,9 +151,12 @@
                 <!-- Hidden field for status -->
                 <input type="hidden" name="status" value="booked">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
-                    <input type="text" name="payment_method" placeholder="Payment Method"
-                        class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <label>Payment Method</label>
+                    <select name="payment_method" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                        <option value="Cash">Cash</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                    </select>
                 </div>
                 <!-- Remove Transaction ID field from form because it is auto-generated -->
                 <button type="submit"
@@ -209,7 +212,7 @@
                                 while ($row = mysqli_fetch_assoc($result)) {
                                     echo "<tr>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['user_id']) . "</td>";
-                                    echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['train_name']) . "</td>";
+                                    echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['train_name']) . "(" . htmlspecialchars($row['train_id']) . ")" . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['start_station_name']) . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['end_station_name']) . "</td>";
                                     echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['seat_number']) . "</td>";
