@@ -15,11 +15,13 @@ session_start();
     <a
       class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
       href="/train/index.php">Dashboard</a>
-<!-- Todo If user is admin then see these routes else no -->
+    <!-- Todo If user is admin then see these routes else no -->
     <?php
     if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin') {
       echo '
   <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/trains/AddTrains.php">Add Trains</a>
+  <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/seats/SeatAvailable.php">Add Seats
+  </a>
   <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/stations/AddStations.php">Add Stations</a>
   <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/routes/Routes.php">Add Routes</a>';
     }

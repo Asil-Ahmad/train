@@ -1,4 +1,4 @@
-<div class="flex flex-col sm:min-h-screen h-full bg-[#F5F5F5]">
+<div class="flex flex-col min-h-screen  bg-[#F5F5F5]">
     <?php
     session_start();
     include('../../../constant/header.html');
