@@ -8,7 +8,7 @@
 
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
-        <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
+        <div class="w-full max-w-[423px] max-h-[624px] bg-white rounded-xl shadow-2xl p-8 ">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Add Station</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>

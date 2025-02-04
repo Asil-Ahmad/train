@@ -6,8 +6,11 @@
     include('../../../config/database.php');
 
     // Check if user is admin
-    $isAdmin = $_SESSION['user_role'] === 'admin';
+    $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
     $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
+    if (!$connection) {
+        die("Database connection failed: " . mysqli_connect_error());
+    }
 
     // Fetch stations list
     $stationsQuery = "SELECT * FROM stations ORDER BY station_name ASC";
@@ -27,6 +30,7 @@
     }
 
     // Handle form submission
+    // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors = [];
         $success = "";
@@ -35,43 +39,64 @@
         if (empty($_POST['train_id']) || empty($_POST['start_station']) || empty($_POST['end_station']) || empty($_POST['seat_number'])) {
             $errors[] = "All fields are required!";
         } else {
-            // For admin users, use posted user_id; otherwise use session
+            // For admin users, use posted user_id; otherwise use session user_id
             $user_id = $isAdmin ? filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT) : $_SESSION['user_id'];
             $train_id = filter_input(INPUT_POST, 'train_id', FILTER_VALIDATE_INT);
             $start_station = filter_input(INPUT_POST, 'start_station', FILTER_VALIDATE_INT);
             $end_station = filter_input(INPUT_POST, 'end_station', FILTER_VALIDATE_INT);
-            $seat_number = filter_input(INPUT_POST, 'seat_number', FILTER_SANITIZE_SPECIAL_CHARS);
+            // Trim and convert seat number to uppercase to avoid mismatches
+            $seat_number = strtoupper(trim(filter_input(INPUT_POST, 'seat_number', FILTER_SANITIZE_SPECIAL_CHARS)));
 
-            // Fetch seat price and route distance
-            $seatQuery = "SELECT price FROM seats WHERE train_id = $train_id AND seat_number = '$seat_number'";
-            $seatResult = mysqli_query($connection, $seatQuery);
-            $seat = mysqli_fetch_assoc($seatResult);
-
-            $routeQuery = "SELECT distance FROM routes WHERE train_id = $train_id AND source_id = $start_station AND destination_id = $end_station";
-            $routeResult = mysqli_query($connection, $routeQuery);
-            $route = mysqli_fetch_assoc($routeResult);
-
-            if (!$seat || !$route) {
-                $errors[] = "Invalid seat or route!";
+            // Check that start and end stations are not the same
+            if ($start_station === $end_station) {
+                $errors[] = "Start station and End station cannot be the same!";
             } else {
-                $price = $seat['price'] * $route['distance'];
-                $distance = $route['distance'];
-                // Get status from the form (hidden input) or default to "booked"
-                $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
-                $payment_method = filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_SPECIAL_CHARS);
-                $transaction_id = filter_input(INPUT_POST, 'transaction_id', FILTER_SANITIZE_SPECIAL_CHARS);
-
-                // Insert ticket into database
-                $sql = "INSERT INTO tickets (user_id, train_id, source_id, destination_id, seat_number, ticket_price, distance, status, payment_method, transaction_id) 
-                        VALUES ('$user_id', '$train_id', '$start_station', '$end_station', '$seat_number', '$price', '$distance', '$status', '$payment_method', '$transaction_id')";
-                if (mysqli_query($connection, $sql)) {
-                    $success = "Ticket booked successfully!";
+                // Fetch seat price from seats table
+                $seatQuery = "SELECT base_price FROM seats WHERE train_id = $train_id AND seat_number = '$seat_number'";
+                $seatResult = mysqli_query($connection, $seatQuery);
+                if (!$seatResult || mysqli_num_rows($seatResult) == 0) {
+                    $errors[] = "Invalid seat! No seat found for train ID $train_id and seat number '$seat_number'.";
                 } else {
-                    $errors[] = "Error: " . mysqli_error($connection);
+                    $seat = mysqli_fetch_assoc($seatResult);
+                }
+
+                // Fetch route distance from routes table (allowing for either direction)
+                $routeQuery = "SELECT distance FROM routes 
+                           WHERE train_id = $train_id 
+                           AND ((source_id = $start_station AND destination_id = $end_station) 
+                                OR (source_id = $end_station AND destination_id = $start_station))";
+                $routeResult = mysqli_query($connection, $routeQuery);
+                if (!$routeResult || mysqli_num_rows($routeResult) == 0) {
+                    $errors[] = "Invalid route! No route found for train ID $train_id with the given stations.";
+                } else {
+                    $route = mysqli_fetch_assoc($routeResult);
+                }
+
+                if (empty($errors)) {
+                    // Calculate ticket price based on seat price and distance
+                    $price = $seat['base_price'] * $route['distance'];
+                    $distance = $route['distance'];
+
+                    // Get status from the form (hidden input) or default to "booked"
+                    $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $payment_method = filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_SPECIAL_CHARS);
+
+                    // Auto-generate a transaction id
+                    $transaction_id = uniqid('txn_', true);
+
+                    // Insert ticket into database
+                    $sql = "INSERT INTO tickets (user_id, train_id, source_id, destination_id, seat_number, ticket_price, distance, status, payment_method, transaction_id) 
+                        VALUES ('$user_id', '$train_id', '$start_station', '$end_station', '$seat_number', '$price', '$distance', '$status', '$payment_method', '$transaction_id')";
+                    if (mysqli_query($connection, $sql)) {
+                        $success = "Ticket booked successfully!";
+                    } else {
+                        $errors[] = "Error: " . mysqli_error($connection);
+                    }
                 }
             }
         }
     }
+
     ?>
 
     <!-- Main Content Wrapper -->
@@ -130,12 +155,7 @@
                     <input type="text" name="payment_method" placeholder="Payment Method"
                         class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Transaction ID</label>
-                    <input type="text" name="transaction_id" placeholder="Transaction ID"
-                        class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
-                </div>
-
+                <!-- Remove Transaction ID field from form because it is auto-generated -->
                 <button type="submit"
                     class="w-full bg-[#0055A5] text-white py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-offset-2 transition-all">
                     Submit
