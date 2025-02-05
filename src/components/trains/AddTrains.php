@@ -5,6 +5,11 @@
     include('../../../constant/sidebar.php');
     include('../../../config/database.php');
 
+    // Establish database connection
+    $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
+    if (!$connection) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
     ?>
 
     <!-- Main Content Wrapper -->
@@ -34,10 +39,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Base Price</label>
-                    <input type="number" name="base_price" placeholder="Enter base price"
-                        class="<?php echo isset($base_price) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
-                    <?php if (isset($base_price) && is_string($base_price)) echo "<p class='text-red-500 text-xs mt-1'>$base_price</p>"; ?>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Available Seats</label>
+                    <input type="number" name="available_seats" placeholder="Enter available seats"
+                        class="<?php echo isset($available_seats) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <?php if (isset($available_seats) && is_string($available_seats)) echo "<p class='text-red-500 text-xs mt-1'>$available_seats</p>"; ?>
                 </div>
 
                 <div>
@@ -63,22 +68,24 @@
 
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (empty($_POST['train_number']) || empty($_POST['train_name']) || empty($_POST['total_seats']) || empty($_POST['base_price']) || empty($_POST['status'])) {
+                if (empty($_POST['train_number']) || empty($_POST['train_name']) || empty($_POST['total_seats']) || empty($_POST['available_seats']) || empty($_POST['status'])) {
                     $train_number = "Train number is required";
                     $train_name = "Train name is required";
                     $total_seats = "Total seats is required";
-                    $base_price = "Base price is required";
+                    $available_seats = "Available seats required";
                     $status = "Status is required";
                 } else {
                     $train_number = filter_input(INPUT_POST, 'train_number', FILTER_SANITIZE_SPECIAL_CHARS);
                     $train_name = filter_input(INPUT_POST, 'train_name', FILTER_SANITIZE_SPECIAL_CHARS);
                     $total_seats = filter_input(INPUT_POST, 'total_seats', FILTER_VALIDATE_INT);
-                    $base_price = filter_input(INPUT_POST, 'base_price', FILTER_VALIDATE_FLOAT);
+                    $available_seats = filter_input(INPUT_POST, 'available_seats', FILTER_VALIDATE_INT);
                     $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+                    if($total_seats < $available_seats) {
+                        $available_seats = "Available seats cannot be greater than total seats";
+                    }
 
-                    $sql = "INSERT INTO trains (train_number, train_name, total_seats, base_price, status) VALUES ('$train_number', '$train_name', '$total_seats', '$base_price', '$status')";
+                    $sql = "INSERT INTO trains (train_number, train_name, total_seats, available_seats, status) VALUES ('$train_number', '$train_name', '$total_seats', '$available_seats', '$status')";
                     try {
-                        $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
                         mysqli_query($connection, $sql);
                         $success = "Train added successfully!";
                     } catch (mysqli_sql_exception $error) {
@@ -98,7 +105,7 @@
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Train Number</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Train Name</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Total Seats</th>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Base Price</th>
+                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Available Seats</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Status</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Live</th>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
@@ -114,7 +121,7 @@
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_number']) . "</td>";
                                 echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_seats']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['base_price']) . "</td>";
+                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['available_seats']) . "</td>";
                                 echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['status']) . "</td>";
                                 if ($row['status'] == 'active') {
                                     echo "<td class='py-2 px-4 border-b border-gray-200'><span class='relative flex h-3 w-3'><span class='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span><span class='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span></span></td>";

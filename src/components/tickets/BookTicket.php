@@ -3,7 +3,7 @@
     session_start();
     include('../../../constant/header.html');
     include('../../../constant/sidebar.php');
-    include('../../../config/database.php');
+    include('../../../config/database.php'); // Ensure this file defines $db_server, $db_user, $db_password, and $db_name
 
     // Check if user is admin
     $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
@@ -14,18 +14,18 @@
     }
 
     // Fetch stations list
-    $stationsQuery = "SELECT * FROM stations ORDER BY station_name ASC";
+    $stationsQuery = "SELECT station_id, station_name FROM stations ORDER BY station_name ASC";
     $stationsResult = mysqli_query($connection, $stationsQuery);
     $stations = mysqli_fetch_all($stationsResult, MYSQLI_ASSOC);
 
-    // Fetch trains list
-    $trainsQuery = "SELECT * FROM trains ORDER BY train_name ASC";
+    // Fetch trains list with available seats
+    $trainsQuery = "SELECT train_id, train_name, available_seats FROM trains ORDER BY train_name ASC";
     $trainsResult = mysqli_query($connection, $trainsQuery);
     $trains = mysqli_fetch_all($trainsResult, MYSQLI_ASSOC);
 
     // Fetch users list for admin
     if ($isAdmin) {
-        $usersQuery = "SELECT id, email FROM users ORDER BY email ASC";
+        $usersQuery = "SELECT user_id, email FROM users ORDER BY email ASC";
         $usersResult = mysqli_query($connection, $usersQuery);
         $users = mysqli_fetch_all($usersResult, MYSQLI_ASSOC);
     }
@@ -36,7 +36,7 @@
         $success = "";
 
         // Validate required fields
-        if (empty($_POST['train_id']) || empty($_POST['start_station']) || empty($_POST['end_station']) || empty($_POST['seat_number'])) {
+        if (empty($_POST['train_id']) || empty($_POST['start_station']) || empty($_POST['end_station']) || empty($_POST['number_of_seats'])) {
             $errors[] = "All fields are required!";
         } else {
             // For admin users, use posted user_id; otherwise use session user_id
@@ -44,52 +44,44 @@
             $train_id = filter_input(INPUT_POST, 'train_id', FILTER_VALIDATE_INT);
             $start_station = filter_input(INPUT_POST, 'start_station', FILTER_VALIDATE_INT);
             $end_station = filter_input(INPUT_POST, 'end_station', FILTER_VALIDATE_INT);
-            // Trim and convert seat number to uppercase to avoid mismatches
-            $seat_number = strtoupper(trim(filter_input(INPUT_POST, 'seat_number', FILTER_SANITIZE_SPECIAL_CHARS)));
+            $number_of_seats = filter_input(INPUT_POST, 'number_of_seats', FILTER_VALIDATE_INT);
 
             // Check that start and end stations are not the same
             if ($start_station === $end_station) {
                 $errors[] = "Start station and End station cannot be the same!";
             } else {
-                // Fetch seat price from seats table and check availability
-                $seatQuery = "SELECT base_price, is_booked FROM seats WHERE train_id = $train_id AND seat_number = '$seat_number'";
-                $seatResult = mysqli_query($connection, $seatQuery);
-                if (!$seatResult || mysqli_num_rows($seatResult) == 0) {
-                    $errors[] = "Invalid seat! No seat found for train ID $train_id and seat number '$seat_number'.";
+                // Check if the number of seats requested is greater than the available seats
+                $availableSeatsQuery = "SELECT available_seats FROM trains WHERE train_id = ?";
+                $stmt = mysqli_prepare($connection, $availableSeatsQuery);
+                mysqli_stmt_bind_param($stmt, "i", $train_id);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_bind_result($stmt, $available_seats);
+                mysqli_stmt_fetch($stmt);
+                mysqli_stmt_close($stmt);
+
+                $status = $number_of_seats > $available_seats ? 'waiting' : 'confirmed';
+
+                // Calculate total price (assuming a fixed price per seat, e.g., $10)
+                $price_per_seat = 10;
+
+                $total_price = $number_of_seats * $price_per_seat;
+
+                // Insert booking into the database
+                $insertQuery = "INSERT INTO bookings (user_id, train_id, start_station_id, end_station_id, number_of_seats, total_price, status) 
+                                              VALUES (?, ?, ?, ?, ?, ?, ?)";
+                $stmt = mysqli_prepare($connection, $insertQuery);
+                mysqli_stmt_bind_param($stmt, "iiiiids", $user_id, $train_id, $start_station, $end_station, $number_of_seats, $total_price, $status);
+
+                if (mysqli_stmt_execute($stmt)) {
+                    $success = "Booking successfully created!";
+                    if ($status === 'confirmed') {
+                        $sql = "UPDATE trains SET available_seats = available_seats - $number_of_seats WHERE train_id = $train_id";
+                        $connection->query($sql);
+                    }
                 } else {
-                    $seat = mysqli_fetch_assoc($seatResult);
-                    if ($seat['is_booked']) {
-                        $errors[] = "This seat is already booked. Please choose another.";
-                    }
+                    $errors[] = "Error creating booking: " . mysqli_error($connection);
                 }
-
-                // (Optional) You could have a route query here to factor in distance.
-                // Since your tickets table does not have a distance field, we use the seat's base_price.
-
-                if (empty($errors)) {
-                    // Use the base_price as ticket price (you can modify the formula as needed)
-                    $price = $seat['base_price'];
-
-                    // Get status from the form (hidden input) or default to "confirmed"
-                    $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'confirmed';
-                    $payment_method = filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_SPECIAL_CHARS);
-
-                    // Auto-generate a transaction id
-                    $transaction_id = uniqid('txn_', true);
-
-                    // Insert ticket into database. Note: booking_date and updated_at are auto-handled.
-                    $sql = "INSERT INTO tickets (user_id, train_id, source_id, destination_id, seat_number, ticket_price, status, payment_method, transaction_id) 
-                            VALUES ('$user_id', '$train_id', '$start_station', '$end_station', '$seat_number', '$price', '$status', '$payment_method', '$transaction_id')";
-                    if (mysqli_query($connection, $sql)) {
-                        // Optionally mark the seat as booked in the seats table
-                        $updateSeatQuery = "UPDATE seats SET is_booked = 1 WHERE train_id = $train_id AND seat_number = '$seat_number'";
-                        mysqli_query($connection, $updateSeatQuery);
-
-                        $success = "Ticket booked successfully!";
-                    } else {
-                        $errors[] = "Error: " . mysqli_error($connection);
-                    }
-                }
+                mysqli_stmt_close($stmt);
             }
         }
     }
@@ -98,7 +90,7 @@
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
         <!-- Book Ticket Form -->
-        <div class="w-full max-w-[410px]  bg-white rounded-xl shadow-2xl p-8">
+        <div class="w-full max-w-[410px] bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Book Ticket</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <?php if ($isAdmin): ?>
@@ -107,7 +99,7 @@
                         <select name="user_id" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
                             <option value="">Select User</option>
                             <?php foreach ($users as $user): ?>
-                                <option value="<?php echo $user['id']; ?>"><?php echo htmlspecialchars($user['email']); ?></option>
+                                <option value="<?php echo $user['user_id']; ?>"><?php echo htmlspecialchars($user['email']); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -140,21 +132,10 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Seat Number</label>
-                    <input type="text" name="seat_number" placeholder="Seat Number"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Number of Seats</label>
+                    <input type="number" name="number_of_seats" placeholder="Number of Seats"
                         class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
                 </div>
-                <!-- Hidden field for status -->
-                <input type="hidden" name="status" value="confirmed">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
-                    <select name="payment_method" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
-                        <option value="Cash">Cash</option>
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Debit Card">Debit Card</option>
-                    </select>
-                </div>
-                <!-- Transaction ID is auto-generated, so no form field is needed -->
                 <button type="submit"
                     class="w-full bg-[#0055A5] text-white py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-offset-2 transition-all">
                     Submit
@@ -165,69 +146,73 @@
             <?php if (!empty($errors)): ?>
                 <div class="mt-4 text-red-500">
                     <?php foreach ($errors as $error): ?>
-                        <p><?php echo $error; ?></p>
+                        <?php include('../../../constant/alerts.php'); ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
             <?php if (!empty($success)): ?>
-                <div class="mt-4 text-green-500">
-                    <p><?php echo $success; ?></p>
-                </div>
+                <?php include('../../../constant/alerts.php'); ?>
             <?php endif; ?>
         </div>
 
-        <!-- Ticket List -->
+        <!-- Booking List -->
         <div class="flex flex-1 justify-center items-center px-4 sticky top-0 ">
             <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-8 overflow-x-scroll">
-                <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Tickets</h2>
-                <div class=" max-h-96">
+                <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Bookings</h2>
+                <div class="">
                     <table class="min-w-full bg-white">
                         <thead class="sticky top-0 bg-gray-100">
-                            <tr class="">
+                            <tr class="truncate">
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">User ID</th>
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Train</th>
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Start Station</th>
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">End Station</th>
-                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Seat Number</th>
-                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Price</th>
+                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Seats</th>
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Status</th>
-                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Payment Method</th>
-                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Transaction ID</th>
+                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Total Price</th>
+                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Booking Date</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm">
+                            <!-- $sql = "SELECT b.booking_id, u.username, u.email, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
+                            FROM bookings b
+                            JOIN users u ON b.user_id = u.user_id
+                            JOIN trains tr ON b.train_id = tr.train_id
+                            JOIN stations s1 ON b.start_station_id = s1.station_id
+                            JOIN stations s2 ON b.end_station_id = s2.station_id"; -->
                             <?php
                             if ($isAdmin) {
-                                $sql = "SELECT t.ticket_id, t.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, t.seat_number, t.ticket_price, t.status, t.payment_method, t.transaction_id 
-                                        FROM tickets t
-                                        JOIN trains tr ON t.train_id = tr.train_id
-                                        JOIN stations s1 ON t.source_id = s1.station_id
-                                        JOIN stations s2 ON t.destination_id = s2.station_id";
+                                $sql = "SELECT b.booking_id, u.email, b.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
+                                                         FROM bookings b
+                                                         JOIN trains tr ON b.train_id = tr.train_id
+                                                         JOIN users u ON b.user_id = u.user_id
+                                                         JOIN stations s1 ON b.start_station_id = s1.station_id
+                                                         JOIN stations s2 ON b.end_station_id = s2.station_id";
                             } else {
-                                $sql = "SELECT t.ticket_id, t.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, t.seat_number, t.ticket_price, t.status, t.payment_method, t.transaction_id 
-                                        FROM tickets t
-                                        JOIN trains tr ON t.train_id = tr.train_id
-                                        JOIN stations s1 ON t.source_id = s1.station_id
-                                        JOIN stations s2 ON t.destination_id = s2.station_id
-                                        WHERE t.user_id = $userId";
+                                $sql = "SELECT b.booking_id, b.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
+                                                         FROM bookings b
+                                                         JOIN trains tr ON b.train_id = tr.train_id
+                                                         JOIN stations s1 ON b.start_station_id = s1.station_id
+                                                         JOIN stations s2 ON b.end_station_id = s2.station_id
+                                                         WHERE b.user_id = $userId";
                             }
                             $result = mysqli_query($connection, $sql);
                             if (mysqli_num_rows($result) > 0) {
                                 while ($row = mysqli_fetch_assoc($result)) {
                                     echo "<tr>";
-                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['user_id']) . "</td>";
+                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200 max-w-6'>" . htmlspecialchars($row['email']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['train_name']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['start_station_name']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['end_station_name']) . "</td>";
-                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['seat_number']) . "</td>";
-                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['ticket_price']) . "</td>";
-                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200 capitalize'>" . htmlspecialchars($row['status']) . "</td>";
-                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['payment_method']) . "</td>";
-                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['transaction_id']) . "</td>";
+                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['number_of_seats']) . "</td>";
+                                    $statusClass = $row['status'] === 'confirmed' ? 'bg-green-100 text-green-600 ' : 'bg-red-100 text-black/50 ';
+                                    echo "<td class='py-2 truncate px-4 border-b text-center text-[10px] font-semibold uppercase border-gray-200 $statusClass'>" . htmlspecialchars($row['status']) . "</td>";
+                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_price']) . "</td>";
+                                    echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['booking_date']) . "</td>";
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='9' class='py-2 px-4 border-b border-gray-200 text-center'>No tickets found</td></tr>";
+                                echo "<tr><td colspan='8' class='py-2 px-4 border-b border-gray-200 text-center'>No bookings found</td></tr>";
                             }
                             ?>
                         </tbody>

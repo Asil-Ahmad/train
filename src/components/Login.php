@@ -33,21 +33,18 @@
 
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                //*if empty show error
                 if (empty($_POST['email']) || empty($_POST['password'])) {
                     $email = empty($_POST['email']) ? "Email is required" : "";
                     $password = empty($_POST['password']) ? "Password is required" : "";
                 } else {
-                    //*if not empty filter the input
                     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
                     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
 
                     $sql = "SELECT * FROM users WHERE email = '$email'";
                     try {
                         $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
-                        $userData = mysqli_query($connection, $sql); //*Same like getting and setting data from userModal the database
-                        $user = mysqli_fetch_assoc($userData); //*fetching the data from the database
-
+                        $userData = mysqli_query($connection, $sql);
+                        $user = mysqli_fetch_assoc($userData);
 
                         if ($user && password_verify($password, $user['password'])) {
                             $_SESSION['user_id'] = $user['id'];
@@ -65,20 +62,6 @@
                 }
             }
             ?>
-            <!-- Todo Toast Notification -->
-            <?php if (isset($success)): ?>
-                <div id="successToast" class="fixed top-4 right-4 p-4 bg-green-50 rounded-lg shadow-lg transition-opacity duration-500">
-                    <p class="text-green-600 text-sm"><?php echo $success; ?></p>
-                </div>
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('successToast').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('successToast').style.display = 'none';
-                        }, 500);
-                    }, 3000);
-                </script>
-            <?php endif; ?>
             <?php if (isset($err)): ?>
                 <div id="errorToast" class="fixed top-4 right-4 p-4 bg-red-50 rounded-lg shadow-lg transition-opacity duration-500">
                     <p class="text-red-600 text-sm"><?php echo $err; ?></p>

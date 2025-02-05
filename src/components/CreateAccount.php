@@ -12,10 +12,10 @@
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Create Account</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <input type="text" name="name" placeholder="Enter your full name"
-                        class="<?php echo isset($name) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border  focus:border-blue-500 transition-all">
-                    <?php if (isset($name) && is_string($name)) echo "<p class='text-red-500 text-xs mt-1'>$name</p>"; ?>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" name="username" placeholder="Enter your username"
+                        class="<?php echo isset($username) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border  focus:border-blue-500 transition-all">
+                    <?php if (isset($username) && is_string($username)) echo "<p class='text-red-500 text-xs mt-1'>$username</p>"; ?>
                 </div>
 
                 <div>
@@ -23,13 +23,6 @@
                     <input type="email" name="email" placeholder="you@example.com"
                         class="<?php echo isset($email) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border  focus:border-blue-500 transition-all">
                     <?php if (isset($email) && is_string($email)) echo "<p class='text-red-500 text-xs mt-1'>$email</p>"; ?>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                    <input type="tel" name="phone" placeholder="Enter your phone number"
-                        class="<?php echo isset($phone) ? 'border-red-500' : 'border-gray-300' ?> w-full px-4 py-3 rounded-lg border  focus:border-blue-500 transition-all">
-                    <?php if (isset($phone) && is_string($phone)) echo "<p class='text-red-500 text-xs mt-1'>$phone</p>"; ?>
                 </div>
 
                 <div>
@@ -47,21 +40,19 @@
 
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['phone']) || empty($_POST['password'])) {
-                    $name = empty($_POST['name']) ? "Name is required" : "";
+                if (empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password'])) {
+                    $username = empty($_POST['username']) ? "Username is required" : "";
                     $email = empty($_POST['email']) ? "Email is required" : "";
-                    $phone = empty($_POST['phone']) ? "Phone is required" : "";
                     $password = empty($_POST['password']) ? "Password is required" : "";
                 } else {
-                    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
                     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-                    $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
                     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
                     $created_at = date('Y-m-d H:i:s');
 
                     $hash = password_hash($password, PASSWORD_DEFAULT);
-                    $sql = "INSERT INTO users (name, email, phone, password, created_at) 
-                           VALUES ('$name', '$email', '$phone', '$hash', '$created_at')";
+                    $sql = "INSERT INTO users (username, email, password) 
+                           VALUES ('$username', '$email', '$hash')";
                     try {
                         $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
                         mysqli_query($connection, $sql);

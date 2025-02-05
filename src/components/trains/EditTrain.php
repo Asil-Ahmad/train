@@ -4,7 +4,12 @@
     include('../../../constant/header.html');
     include('../../../constant/sidebar.php');
     include('../../../config/database.php');
+
+    // Establish database connection
     $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
+    if (!$connection) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
 
     if (isset($_GET['id'])) {
         $train_id = $_GET['id'];
@@ -17,13 +22,15 @@
         $train_number = filter_input(INPUT_POST, 'train_number', FILTER_SANITIZE_SPECIAL_CHARS);
         $train_name = filter_input(INPUT_POST, 'train_name', FILTER_SANITIZE_SPECIAL_CHARS);
         $total_seats = filter_input(INPUT_POST, 'total_seats', FILTER_VALIDATE_INT);
+        $available_seats = filter_input(INPUT_POST, 'available_seats', FILTER_VALIDATE_INT);
         $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
-        $base_price = filter_input(INPUT_POST, 'base_price', FILTER_VALIDATE_FLOAT);
 
-        if (empty($train_number) || empty($train_name) || empty($total_seats) || empty($status) || empty($base_price)) {
+        if (empty($train_number) || empty($train_name) || empty($total_seats) || empty($available_seats) || empty($status)) {
             $error = "All fields are required";
+        } elseif ($total_seats < $available_seats) {
+            $error = "Available seats cannot be greater than total seats";
         } else {
-            $sql = "UPDATE trains SET train_number='$train_number', train_name='$train_name', total_seats='$total_seats', status='$status', base_price='$base_price' WHERE train_id=$train_id";
+            $sql = "UPDATE trains SET train_number='$train_number', train_name='$train_name', total_seats='$total_seats', available_seats='$available_seats', status='$status' WHERE train_id=$train_id";
             try {
                 mysqli_query($connection, $sql);
                 $success = "Train updated successfully!";
@@ -37,32 +44,32 @@
     ?>
 
     <!-- Main Content Wrapper -->
-    <div class="flex items-center justify-center px-4">
+    <div class="flex sm:flex-row flex-col sm:gap-0 gap-5 items-center justify-center sm:px-4 px-0">
         <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Edit Train</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . "?id=$train_id"; ?>" method="POST">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Train Number</label>
                     <input type="text" name="train_number" value="<?php echo htmlspecialchars($train['train_number']); ?>" placeholder="Enter train number"
-                        class="w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                        class="w-full px-4 py-3 rounded-lg border-gray-300 border-1 focus:border-blue-500 transition-all">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Train Name</label>
                     <input type="text" name="train_name" value="<?php echo htmlspecialchars($train['train_name']); ?>" placeholder="Enter train name"
-                        class="w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                        class="w-full px-4 py-3 rounded-lg border-gray-300 border-1 focus:border-blue-500 transition-all">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Total Seats</label>
                     <input type="number" name="total_seats" value="<?php echo htmlspecialchars($train['total_seats']); ?>" placeholder="Enter total seats"
-                        class="w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                        class="w-full px-4 py-3 rounded-lg border-gray-300 border-1 focus:border-blue-500 transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Base Price</label>
-                    <input type="number" step="0.01" name="base_price" value="<?php echo htmlspecialchars($train['base_price']); ?>" placeholder="Enter base price"
-                        class="w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Available Seats</label>
+                    <input type="number" name="available_seats" value="<?php echo htmlspecialchars($train['available_seats']); ?>" placeholder="Enter available seats"
+                        class="w-full px-4 py-3 rounded-lg border-gray-300 border-1 focus:border-blue-500 transition-all">
                 </div>
 
                 <div>
@@ -94,7 +101,7 @@
         if (successMessage) {
             setTimeout(function() {
                 window.location.href = '/train/src/components/trains/AddTrains.php'; // Redirect to the previous page
-            }, 3000); // 3 seconds delay
+            }, 1000); // 3 seconds delay
         }
     });
 </script>

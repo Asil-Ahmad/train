@@ -13,15 +13,14 @@ session_start();
   <div
     class="flex py-4 justify-end gap-1 bg-[#F5F5F5] text-[#37474F] text-sm font-fine">
     <a
-      class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
-      href="/train/index.php">Dashboard</a>
+      class="border-b-2 border-transparent  hover:border-[#0055A5]  px-5 py-1"
+      href="/train/dashboard.php">Dashboard</a>
     <!-- Todo If user is admin then see these routes else no -->
     <?php
     if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin') {
       echo '
   <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/trains/AddTrains.php">Add Trains</a>
-  <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/seats/SeatAvailable.php">Add Seats
-  </a>
+ 
   <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/stations/AddStations.php">Add Stations</a>
   <a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/routes/Routes.php">Add Routes</a>';
     }
