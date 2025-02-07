@@ -100,74 +100,95 @@
 
     <!-- Ticket Preview Modal -->
     <div id="ticketPreviewModal" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 w-full max-w-md">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">E-Ticket</h2>
-                <img src="/train/assets/Indian_Railways.png" alt="Logo" class="h-8">
+        <div class="bg-white scale-75 rounded-2xl shadow-2xl p-8 w-full max-w-lg">
+            <!-- Header with Logo and Title -->
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div class="flex items-center">
+                    <img src="/train/assets/Indian_Railways.png" alt="Logo" class="h-12">
+                    <div class="ml-4">
+                        <h2 class="text-2xl font-bold text-[#0055A5]">Indian Railways</h2>
+                        <p class="text-sm text-gray-500">Digital Ticket</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm font-bold text-gray-600">E-Ticket</div>
+                    <!-- <div class="text-xs text-gray-400">${ticket.booking_id}</div> -->
+                </div>
             </div>
-            
+
             <div id="ticketDetails" class="relative">
-                <!-- Decorative elements -->
-                <div class="absolute -left-9 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black rounded-full"></div>
-                <div class="absolute -right-9 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black rounded-full"></div>
-                <div class="border-dashed border-2 border-gray-200 rounded-xl p-6 bg-white">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center pb-4 border-b border-gray-100">
-                            <div class="text-xs text-gray-500">Booking ID</div>
-                            <div class="text-sm font-semibold">#${ticket.booking_id}</div>
+                <!-- Main Ticket Content -->
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-[#FAFBFF]">
+                    <!-- Journey Details -->
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="text-left flex-1">
+                            <div class="text-3xl font-bold text-gray-800">${ticket.start_station_name}</div>
+                            <div class="text-sm text-gray-500">Departure</div>
                         </div>
-                        
-                        <div class="flex justify-between items-start">
-                            <div class="text-left">
-                                <div class="text-xs text-gray-500">From</div>
-                                <div class="text-sm font-semibold">${ticket.start_station_name}</div>
-                            </div>
-                            <div class="flex-1 px-4 pt-2">
-                                <div class="relative h-0.5 bg-blue-500">
-                                    <div class="absolute -top-2 left-0 w-4 h-4 rounded-full bg-blue-500"></div>
-                                    <div class="absolute -top-2 right-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                        <div class="flex-1 px-4 flex flex-col items-center">
+                            <div class="w-full flex items-center justify-center">
+                                <div class="h-[2px] w-full bg-[#0055A5] relative">
+                                    <div class="absolute -top-1.5 -left-1 w-3 h-3 rounded-full bg-[#0055A5]"></div>
+                                    <div class="absolute -top-1.5 -right-1 w-3 h-3 rounded-full bg-[#0055A5]"></div>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-xs text-gray-500">To</div>
-                                <div class="text-sm font-semibold">${ticket.end_station_name}</div>
-                            </div>
+                            <img src="/train/assets/train-icon.png" alt="Train" class="h-6 my-2">
                         </div>
+                        <div class="text-right flex-1">
+                            <div class="text-3xl font-bold text-gray-800">${ticket.end_station_name}</div>
+                            <div class="text-sm text-gray-500">Arrival</div>
+                        </div>
+                    </div>
 
-                        <div class="grid grid-cols-2 gap-4 py-4">
+                    <!-- Train and Passenger Details -->
+                    <div class="bg-white rounded-lg p-4 shadow-sm mb-4">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <div class="text-xs text-gray-500">Train</div>
-                                <div class="text-sm font-semibold">${ticket.train_name}</div>
+                                <div class="text-[10px] font-bold text-gray-800">${ticket.train_name}</div>
                             </div>
                             <div>
-                                <div class="text-xs text-gray-500">Seats</div>
-                                <div class="text-sm font-semibold">${ticket.number_of_seats}</div>
-                            </div>
-                            <div>
-                                <div class="text-xs text-gray-500">Status</div>
-                                <div class="text-sm font-semibold ${ticket.status === 'confirmed' ? 'text-green-500' : 'text-red-500'}">${ticket.status.toUpperCase()}</div>
-                            </div>
-                            <div>
-                                <div class="text-xs text-gray-500">Price</div>
-                                <div class="text-sm font-semibold">₹${ticket.total_price}</div>
+                                <div class="text-xs text-gray-500">Passenger</div>
+                                <div class="text-[10px] font-bold text-gray-800">${ticket.email}</div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="pt-4 border-t border-gray-100">
-                            <div class="text-xs text-gray-500">Passenger</div>
-                            <div class="text-sm font-semibold">${ticket.email}</div>
-                            <div class="text-xs text-gray-500 mt-2">Booked On</div>
-                            <div class="text-sm font-semibold">${ticket.booking_date}</div>
+                    <!-- Booking Details -->
+                    <div class="grid grid-cols-3 gap-4 bg-white rounded-lg p-4 shadow-sm">
+                        <div>
+                            <div class="text-xs text-gray-500">Seats</div>
+                            <div class="text-lg font-bold text-gray-800">${ticket.number_of_seats}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500">Status</div>
+                            <div class="text-lg font-bold ${ticket.status === 'confirmed' ? 'text-green-600' : 'text-red-600'}">${ticket.status.toUpperCase()}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500">Price</div>
+                            <div class="text-lg font-bold text-gray-800">₹${ticket.total_price}</div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Details -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <div>Booking Date: ${ticket.booking_date}</div>
+                            <div>Valid for one journey only</div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Action Buttons -->
             <div class="flex justify-end space-x-4 mt-6">
-                <button onclick="printTicket()" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                  Print
+                <button onclick="printTicket()" class="bg-[#0055A5] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    Print Ticket
                 </button>
-                <button onclick="closeTicketPreview()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                <button onclick="closeTicketPreview()" class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors">
                     Close
                 </button>
             </div>
@@ -180,52 +201,114 @@
             const ticketDetails = document.getElementById('ticketDetails');
             ticketDetails.querySelector('.border-dashed').innerHTML = `
                 <div class="space-y-4">
-                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
-                        <div class="text-xs text-gray-500">Booking ID</div>
-                        <div class="text-sm font-semibold">#${ticket.booking_id}</div>
-                    </div>
-                    
-                    <div class="flex justify-between items-start">
-                        <div class="text-left">
-                            <div class="text-xs text-gray-500">From</div>
-                            <div class="text-sm font-semibold">${ticket.start_station_name}</div>
-                        </div>
-                        <div class="flex-1 px-4 pt-2">
-                            <div class="relative h-0.5 bg-blue-500">
-                                <div class="absolute -top-2 left-0 w-4 h-4 rounded-full bg-blue-500"></div>
-                                <div class="absolute -top-2 right-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                    <!-- Ticket Header -->
+                    <div class="flex items-center justify-between border-b pb-4">
+                        <div class="flex items-center">
+                            <img src="/train/assets/Indian_Railways.png" alt="IR Logo" class="h-12 w-12">
+                            <div class="ml-3">
+                                <h3 class="font-bold text-lg text-[#0055A5]">Indian Railways</h3>
+                                <p class="text-xs text-gray-500">E-Ticket / ${ticket.status.toUpperCase()}</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-xs text-gray-500">To</div>
-                            <div class="text-sm font-semibold">${ticket.end_station_name}</div>
+                            <p class="text-sm font-semibold">PNR: ${String(ticket.booking_id).padStart(10, '0')}</p>
+                            <p class="text-xs text-gray-500">Date: ${new Date(ticket.booking_date).toLocaleDateString()}</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 py-4">
-                        <div>
-                            <div class="text-xs text-gray-500">Train</div>
-                            <div class="text-sm font-semibold">${ticket.train_name}</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-500">Seats</div>
-                            <div class="text-sm font-semibold">${ticket.number_of_seats}</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-500">Status</div>
-                            <div class="text-sm font-semibold ${ticket.status === 'confirmed' ? 'text-green-500' : 'text-red-500'}">${ticket.status.toUpperCase()}</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-500">Price</div>
-                            <div class="text-sm font-semibold">₹${ticket.total_price}</div>
+                    <!-- Journey Details -->
+                    <div class="py-6">
+                        <div class="flex justify-between items-center">
+                            <div class="text-left flex-1">
+                                <div class="text-2xl font-bold">${ticket.start_station_name}</div>
+                                <div class="text-sm text-gray-600">Departure Station</div>
+                            </div>
+                            <div class="flex-1 px-4 flex flex-col items-center">
+                                <svg class="w-8 h-8 text-[#0055A5]" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M5.5 13a3.5 3.5 0 01-3.5-3.5V4.5A3.5 3.5 0 015.5 1h9a3.5 3.5 0 013.5 3.5V9.5a3.5 3.5 0 01-3.5 3.5h-9zM5.5 3a1.5 1.5 0 00-1.5 1.5V9.5A1.5 1.5 0 005.5 11h9a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0014.5 3h-9z"/>
+                                    <path d="M8 7a1 1 0 11-2 0 1 1 0 012 0zm2 0a1 1 0 11-2 0 1 1 0 012 0zm2 0a1 1 0 11-2 0 1 1 0 012 0z"/>
+                                </svg>
+                                <div class="w-full h-0.5 bg-[#0055A5] relative my-2">
+                                    <div class="absolute -left-1 -top-1.5 w-3 h-3 rounded-full bg-[#0055A5]"></div>
+                                    <div class="absolute -right-1 -top-1.5 w-3 h-3 rounded-full bg-[#0055A5]"></div>
+                                </div>
+                            </div>
+                            <div class="text-right flex-1">
+                                <div class="text-2xl font-bold">${ticket.end_station_name}</div>
+                                <div class="text-sm text-gray-600">Arrival Station</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t border-gray-100">
-                        <div class="text-xs text-gray-500">Passenger</div>
-                        <div class="text-sm font-semibold">${ticket.email}</div>
-                        <div class="text-xs text-gray-500 mt-2">Booked On</div>
-                        <div class="text-sm font-semibold">${ticket.booking_date}</div>
+                    <!-- Passenger & Train Details -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    <span class="text-sm text-gray-600">Passenger</span>
+                                </div>
+                                <p class="font-semibold mt-1">${ticket.email}</p>
+                            </div>
+                            <div>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                                    </svg>
+                                    <span class="text-sm text-gray-600">Train</span>
+                                </div>
+                                <p class="font-semibold mt-1">${ticket.train_name}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booking Details -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center p-3 bg-gray-50 rounded-lg">
+                            <svg class="w-5 h-5 mx-auto text-gray-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            <div class="text-sm text-gray-600">Seats</div>
+                            <div class="font-bold">${ticket.number_of_seats}</div>
+                        </div>
+                        <div class="text-center p-3 bg-gray-50 rounded-lg">
+                            <svg class="w-5 h-5 mx-auto ${ticket.status === 'confirmed' ? 'text-green-500' : 'text-red-500'} mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div class="text-sm text-gray-600">Status</div>
+                            <div class="font-bold ${ticket.status === 'confirmed' ? 'text-green-600' : 'text-red-600'}">${ticket.status.toUpperCase()}</div>
+                        </div>
+                        <div class="text-center p-3 bg-gray-50 rounded-lg">
+                            <svg class="w-5 h-5 mx-auto text-gray-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div class="text-sm text-gray-600">Price</div>
+                            <div class="font-bold">₹${ticket.total_price}</div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <h4 class="text-xs font-semibold text-gray-600 mb-2">Terms & Conditions</h4>
+                        <ul class="text-[10px] text-gray-500 list-disc pl-4 space-y-1">
+                            <li>This e-ticket is valid only with a government-issued photo ID proof.</li>
+                            <li>Please carry the original ID proof during the journey.</li>
+                            <li>Ticket is non-transferable and valid only for one journey.</li>
+                            <li>Arrival and departure times are subject to change without prior notice.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="mt-4 flex justify-between items-center text-xs text-gray-500">
+                        <div>Generated on: ${new Date(ticket.booking_date).toLocaleString()}</div>
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Help: 1800-111-139</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -239,7 +322,18 @@
         function printTicket() {
             const printContents = document.getElementById('ticketDetails').innerHTML;
             const originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
+
+            const printStyles = `
+                <style>
+                    @media print {
+                        body { padding: 20px; font-family: Arial, sans-serif; }
+                        svg { color: #0055A5 !important; }
+                        .border-dashed { border: 2px dashed #ccc; padding: 20px; }
+                    }
+                </style>
+            `;
+
+            document.body.innerHTML = printStyles + printContents;
             window.print();
             document.body.innerHTML = originalContents;
             closeTicketPreview();
