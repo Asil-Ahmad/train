@@ -58,7 +58,6 @@
 
                 // Calculate total price (assuming a fixed price per seat, e.g., $10)
                 $price_per_seat = 10;
-
                 $total_price = $number_of_seats * $price_per_seat;
 
                 // Insert booking into the database
@@ -98,6 +97,154 @@
         mysqli_stmt_close($stmt);
     }
     ?>
+
+    <!-- Ticket Preview Modal -->
+    <div id="ticketPreviewModal" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">E-Ticket</h2>
+                <img src="/train/assets/Indian_Railways.png" alt="Logo" class="h-8">
+            </div>
+            
+            <div id="ticketDetails" class="relative">
+                <!-- Decorative elements -->
+                <div class="absolute -left-8 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-gray-200 rounded-full"></div>
+                <div class="absolute -right-8 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-gray-200 rounded-full"></div>
+                <div class="border-dashed border-2 border-gray-200 rounded-xl p-6 bg-white">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                            <div class="text-xs text-gray-500">Booking ID</div>
+                            <div class="text-sm font-semibold">#${ticket.booking_id}</div>
+                        </div>
+                        
+                        <div class="flex justify-between items-start">
+                            <div class="text-left">
+                                <div class="text-xs text-gray-500">From</div>
+                                <div class="text-sm font-semibold">${ticket.start_station_name}</div>
+                            </div>
+                            <div class="flex-1 px-4 pt-2">
+                                <div class="relative h-0.5 bg-blue-500">
+                                    <div class="absolute -top-2 left-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                                    <div class="absolute -top-2 right-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500">To</div>
+                                <div class="text-sm font-semibold">${ticket.end_station_name}</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 py-4">
+                            <div>
+                                <div class="text-xs text-gray-500">Train</div>
+                                <div class="text-sm font-semibold">${ticket.train_name}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">Seats</div>
+                                <div class="text-sm font-semibold">${ticket.number_of_seats}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">Status</div>
+                                <div class="text-sm font-semibold ${ticket.status === 'confirmed' ? 'text-green-500' : 'text-red-500'}">${ticket.status.toUpperCase()}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">Price</div>
+                                <div class="text-sm font-semibold">$${ticket.total_price}</div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100">
+                            <div class="text-xs text-gray-500">Passenger</div>
+                            <div class="text-sm font-semibold">${ticket.email}</div>
+                            <div class="text-xs text-gray-500 mt-2">Booked On</div>
+                            <div class="text-sm font-semibold">${ticket.booking_date}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4 mt-6">
+                <button onclick="printTicket()" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-print mr-2"></i>Print
+                </button>
+                <button onclick="closeTicketPreview()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTicketPreview(ticket) {
+            const modal = document.getElementById('ticketPreviewModal');
+            const ticketDetails = document.getElementById('ticketDetails');
+            ticketDetails.querySelector('.border-dashed').innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                        <div class="text-xs text-gray-500">Booking ID</div>
+                        <div class="text-sm font-semibold">#${ticket.booking_id}</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-start">
+                        <div class="text-left">
+                            <div class="text-xs text-gray-500">From</div>
+                            <div class="text-sm font-semibold">${ticket.start_station_name}</div>
+                        </div>
+                        <div class="flex-1 px-4 pt-2">
+                            <div class="relative h-0.5 bg-blue-500">
+                                <div class="absolute -top-2 left-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                                <div class="absolute -top-2 right-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gray-500">To</div>
+                            <div class="text-sm font-semibold">${ticket.end_station_name}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 py-4">
+                        <div>
+                            <div class="text-xs text-gray-500">Train</div>
+                            <div class="text-sm font-semibold">${ticket.train_name}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500">Seats</div>
+                            <div class="text-sm font-semibold">${ticket.number_of_seats}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500">Status</div>
+                            <div class="text-sm font-semibold ${ticket.status === 'confirmed' ? 'text-green-500' : 'text-red-500'}">${ticket.status.toUpperCase()}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500">Price</div>
+                            <div class="text-sm font-semibold">$${ticket.total_price}</div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <div class="text-xs text-gray-500">Passenger</div>
+                        <div class="text-sm font-semibold">${ticket.email}</div>
+                        <div class="text-xs text-gray-500 mt-2">Booked On</div>
+                        <div class="text-sm font-semibold">${ticket.booking_date}</div>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeTicketPreview() {
+            document.getElementById('ticketPreviewModal').classList.add('hidden');
+        }
+
+        function printTicket() {
+            const printContents = document.getElementById('ticketDetails').innerHTML;
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            closeTicketPreview();
+        }
+    </script>
 
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
@@ -221,7 +368,7 @@
                                     echo "<td class='py-2 truncate px-4 border-b text-center text-[10px] font-semibold uppercase border-gray-200 $statusClass'>" . htmlspecialchars($row['status']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_price']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['booking_date']) . "</td>";
-                                    echo "<td title='Not Working' class='py-2 cursor-pointer bg-green-600  text-center text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Print Ticket</td>";
+                                    echo "<td onclick='showTicketPreview(" . json_encode($row) . ")' class='py-2 cursor-pointer bg-green-600  text-center text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Print Ticket</td>";
                                     echo "</tr>";
                                 }
                             } else {
