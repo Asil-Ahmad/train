@@ -1,6 +1,6 @@
 <?php
 session_start();
-// echo $_SESSION['user_role'] == 'admin' ? "isAdmin" : 'isUser';
+include('../../../config/database.php');
 ?>
 
 <nav class="bg-[#F5F5F5]">
@@ -31,23 +31,23 @@ session_start();
       href="/train/src/components/tickets/BookTicket.php">Book Ticket</a>
 
     <?php
-    echo isset($_SESSION['user_id'])
+    echo isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin' || isset($_SESSION['user_id'])
       ? '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/Logout.php">Logout</a>'
       : '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="/train/src/components/Login.php">Login</a>';
     ?>
 
 
     <?php
-    echo empty($_SESSION['user_id']) ? '<a
-        class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
-        href="/train/src/components/CreateAccount.php">Sign Up</a>' :
+    echo !isset($_SESSION['user_id']) ? '<a
+            class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1"
+            href="/train/src/components/CreateAccount.php">Sign Up</a>' : '';
 
-      '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="#">
-          <div class="flex items-center gap-1">
-              <p class="w-6 h-6 text-center content-center bg-[#0055A5] text-white rounded-full">A</p>
-              <span class="font-semibold">' . $_SESSION['user_name'] . '</span>
-          </div>
-      </a>';
+    echo isset($_SESSION['user_id']) ? '<a class="border-b-2 border-transparent hover:border-[#0055A5]  px-5 py-1" href="#">
+              <div class="flex items-center gap-1">
+                  <p class="w-6 h-6 text-center content-center bg-[#0055A5] text-white rounded-full">A</p>
+                  <span class="font-semibold">' . $_SESSION['user_name'] . '</span>
+              </div>
+          </a>' : '';
     ?>
 
 

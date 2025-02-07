@@ -1,17 +1,23 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    // Redirect to a different page or show an error message
+    header("Location: /path/to/your/error/page.php");
+    exit();
+}
+
+include('../../../constant/header.html');
+include('../../../constant/sidebar.php');
+include('../../../config/database.php');
+
+// Establish database connection
+$connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+
 <div class="flex flex-col min-h-screen  bg-[#F5F5F5]">
-    <?php
-    session_start();
-    include('../../../constant/header.html');
-    include('../../../constant/sidebar.php');
-    include('../../../config/database.php');
-
-    // Establish database connection
-    $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
-    if (!$connection) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
-    ?>
-
     <!-- Main Content Wrapper -->
     <div class="flex sm:flex-row flex-col sm:gap-0 gap-5  items-start sm:px-4 px-0">
         <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">

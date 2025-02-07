@@ -47,9 +47,10 @@
                         $user = mysqli_fetch_assoc($userData);
 
                         if ($user && password_verify($password, $user['password'])) {
-                            $_SESSION['user_id'] = $user['id'];
-                            $_SESSION['user_name'] = $user['name'];
+                            $_SESSION['user_id'] = $user['user_id'];
+                            $_SESSION['user_name'] = $user['username'];
                             $_SESSION['user_role'] = $user['role'];
+
 
                             header("Location: /train/index.php");
                             exit();

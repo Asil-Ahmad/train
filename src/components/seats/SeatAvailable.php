@@ -4,6 +4,11 @@ include('../../../constant/header.html');
 include('../../../constant/sidebar.php');
 include('../../../config/database.php');
 $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    // Redirect to a different page or show an error message
+    header("Location: /path/to/your/error/page.php");
+    exit();
+}
 ?>
 
 <div class="flex flex-col min-h-screen bg-[#F5F5F5]">

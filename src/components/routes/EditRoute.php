@@ -4,6 +4,11 @@
     include('../../../constant/header.html');
     include('../../../constant/sidebar.php');
     include('../../../config/database.php');
+    if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+        // Redirect to a different page or show an error message
+        header("Location: /path/to/your/error/page.php");
+        exit();
+    }
 
     $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
     $train_sql = "SELECT train_id, train_name FROM trains WHERE status = 'active'";

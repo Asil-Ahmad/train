@@ -1,6 +1,11 @@
 <?php
 // Include database connection file
 include('../../../config/database.php');
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    // Redirect to a different page or show an error message
+    header("Location: /path/to/your/error/page.php");
+    exit();
+}
 
 // Create a database connection
 $connection = mysqli_connect($db_server, $db_user, $db_password, $db_name);
