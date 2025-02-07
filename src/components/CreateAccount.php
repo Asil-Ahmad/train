@@ -83,6 +83,7 @@
                         Verify OTP
                     </button>
                 </form>
+                
             <?php else: ?>
                 <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                     <div>
@@ -106,7 +107,7 @@
                         <?php if (isset($password) && is_string($password)) echo "<p class='text-red-500 text-xs mt-1'>$password</p>"; ?>
                     </div>
 
-                    <button type="submit" name="send_otp" 
+                    <button type="submit" name="send_otp"
                         class="w-full bg-[#0055A5]  text-white py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-offset-2 transition-all">
                         Send OTP
                     </button>
@@ -139,30 +140,10 @@
             ?>
             <!-- Todo Toast Notification -->
             <?php if (isset($success)): ?>
-                <div id="successToast" class="fixed top-4 right-4 p-4 bg-green-50 rounded-lg shadow-lg transition-opacity duration-500">
-                    <p class="text-green-600 text-sm"><?php echo $success; ?></p>
-                </div>
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('successToast').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('successToast').style.display = 'none';
-                        }, 500);
-                    }, 3000);
-                </script>
+                <?php include('../../constant/alerts.php'); ?>
             <?php endif; ?>
             <?php if (isset($err)): ?>
-                <div id="errorToast" class="fixed top-4  right-4 p-4 bg-red-50 rounded-lg shadow-lg transition-opacity duration-500">
-                    <p class="text-red-600 text-sm"><?php echo $err; ?></p>
-                </div>
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('errorToast').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('errorToast').style.display = 'none';
-                        }, 500);
-                    }, 3000);
-                </script>
+                <?php include('../../constant/alerts.php'); ?>
             <?php endif; ?>
         </div>
     </div>
