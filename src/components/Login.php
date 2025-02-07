@@ -4,6 +4,57 @@
     include('../../constant/header.html');
     include('../../constant/sidebar.php');
     include('../../config/database.php');
+
+    // Include PHPMailer files
+    require '../PHPMailer.php';
+    require '../SMTP.php';
+    require '../Exception.php';
+
+    use PHPMailer\PHPMailer\PHPMailer;
+
+    // Function to send email
+    function sendEmail($toEmail, $subject, $body)
+    {
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'asil.infoseek@gmail.com';
+            $mail->Password = 'tkqmrgkufgvxrgfe';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Recipients
+            $mail->setFrom('asil.infoseek@gmail.com', 'Asil');
+            $mail->addAddress($toEmail);
+            $mail->addAttachment(__DIR__ . '/../../assets/Indian_Railways.png');
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $body;
+
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log("Mailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+
+    // Example usage of sendEmail function
+    // $email = 'asil.infoseek@gmail.com';
+    // $subject = 'Test Email';
+    // $body = 'This is a test email.';
+
+    // if (sendEmail($toEmail, $subject, $body)) {
+    //     echo 'Email sent successfully.';
+    // } else {
+    //     echo 'Failed to send email.';
+    // }
     ?>
 
     <!-- Main Content Wrapper -->
@@ -50,10 +101,22 @@
                             $_SESSION['user_id'] = $user['user_id'];
                             $_SESSION['user_name'] = $user['username'];
                             $_SESSION['user_role'] = $user['role'];
+                            $_SESSION['user_email'] = $user['email'];
 
+                            echo $user['email'];
 
-                            header("Location: /train/index.php");
-                            exit();
+                            $toEmail = $user['email'];
+                            $subject = 'BookMyTrain';
+                            $body = 'You have successfully logged in to BookMyTrain.';
+                            
+
+                            if (sendEmail($toEmail, $subject, $body)) {
+                                echo 'Email sent successfully.';
+                                header("Location: /train/index.php");
+                                exit();
+                            } else {
+                                echo 'Failed to send email.';
+                            }
                         } else {
                             $err = "Invalid email or password";
                         }
