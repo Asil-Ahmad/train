@@ -57,7 +57,7 @@
                 $status = $number_of_seats > $available_seats ? 'waiting' : 'confirmed';
 
                 // Calculate total price (assuming a fixed price per seat, e.g., $10)
-                $price_per_seat = 10;
+                $price_per_seat = 19.35;
                 $total_price = $number_of_seats * $price_per_seat;
 
                 // Insert booking into the database
@@ -108,8 +108,8 @@
             
             <div id="ticketDetails" class="relative">
                 <!-- Decorative elements -->
-                <div class="absolute -left-8 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-gray-200 rounded-full"></div>
-                <div class="absolute -right-8 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-gray-200 rounded-full"></div>
+                <div class="absolute -left-9 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black rounded-full"></div>
+                <div class="absolute -right-9 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black rounded-full"></div>
                 <div class="border-dashed border-2 border-gray-200 rounded-xl p-6 bg-white">
                     <div class="space-y-4">
                         <div class="flex justify-between items-center pb-4 border-b border-gray-100">
@@ -149,7 +149,7 @@
                             </div>
                             <div>
                                 <div class="text-xs text-gray-500">Price</div>
-                                <div class="text-sm font-semibold">$${ticket.total_price}</div>
+                                <div class="text-sm font-semibold">₹${ticket.total_price}</div>
                             </div>
                         </div>
 
@@ -165,7 +165,7 @@
 
             <div class="flex justify-end space-x-4 mt-6">
                 <button onclick="printTicket()" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                    <i class="fas fa-print mr-2"></i>Print
+                  Print
                 </button>
                 <button onclick="closeTicketPreview()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
                     Close
@@ -217,7 +217,7 @@
                         </div>
                         <div>
                             <div class="text-xs text-gray-500">Price</div>
-                            <div class="text-sm font-semibold">$${ticket.total_price}</div>
+                            <div class="text-sm font-semibold">₹${ticket.total_price}</div>
                         </div>
                     </div>
 
