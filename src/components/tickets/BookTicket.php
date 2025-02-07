@@ -13,13 +13,8 @@
         die("Database connection failed: " . mysqli_connect_error());
     }
 
-    // Fetch stations list
-    $stationsQuery = "SELECT station_id, station_name FROM stations ORDER BY station_name ASC";
-    $stationsResult = mysqli_query($connection, $stationsQuery);
-    $stations = mysqli_fetch_all($stationsResult, MYSQLI_ASSOC);
-
     // Fetch trains list with available seats
-    $trainsQuery = "SELECT train_id, train_name, available_seats FROM trains ORDER BY train_name ASC";
+    $trainsQuery = "SELECT train_id, train_name, available_seats FROM trains WHERE status = 'active' ORDER BY train_name ASC";
     $trainsResult = mysqli_query($connection, $trainsQuery);
     $trains = mysqli_fetch_all($trainsResult, MYSQLI_ASSOC);
 
@@ -85,6 +80,23 @@
             }
         }
     }
+
+    // Fetch stations list based on selected train
+    $stations = [];
+    if (!empty($_POST['train_id'])) {
+        $train_id = filter_input(INPUT_POST, 'train_id', FILTER_VALIDATE_INT);
+        $stationsQuery = "SELECT DISTINCT s.station_id, s.station_name 
+                          FROM routes r 
+                          JOIN stations s ON r.station_id = s.station_id 
+                          WHERE r.train_id = ? 
+                          ORDER BY s.station_name ASC";
+        $stmt = mysqli_prepare($connection, $stationsQuery);
+        mysqli_stmt_bind_param($stmt, "i", $train_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $stations = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        mysqli_stmt_close($stmt);
+    }
     ?>
 
     <!-- Main Content Wrapper -->
@@ -106,19 +118,19 @@
                 <?php endif; ?>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Train</label>
-                    <select name="train_id" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <select name="train_id" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all" onchange="this.form.submit()">
                         <option value="">Select Train</option>
                         <?php foreach ($trains as $train): ?>
-                            <option value="<?php echo $train['train_id']; ?>"><?php echo htmlspecialchars($train['train_name']); ?></option>
+                            <option value="<?php echo $train['train_id']; ?>" <?php echo isset($_POST['train_id']) && $_POST['train_id'] == $train['train_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($train['train_name']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Start Station</label>
-                    <select name="start_station" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
+                    <select name="start_station" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all" onchange="this.form.submit()">
                         <option value="">Select Start Station</option>
                         <?php foreach ($stations as $station): ?>
-                            <option value="<?php echo $station['station_id']; ?>"><?php echo htmlspecialchars($station['station_name']); ?></option>
+                            <option value="<?php echo $station['station_id']; ?>" <?php echo isset($_POST['start_station']) && $_POST['start_station'] == $station['station_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($station['station_name']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -127,7 +139,9 @@
                     <select name="end_station" class="border-gray-300 w-full px-4 py-3 rounded-lg border focus:border-blue-500 transition-all">
                         <option value="">Select End Station</option>
                         <?php foreach ($stations as $station): ?>
-                            <option value="<?php echo $station['station_id']; ?>"><?php echo htmlspecialchars($station['station_name']); ?></option>
+                            <?php if (!isset($_POST['start_station']) || $_POST['start_station'] != $station['station_id']): ?>
+                                <option value="<?php echo $station['station_id']; ?>"><?php echo htmlspecialchars($station['station_name']); ?></option>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -146,12 +160,14 @@
             <?php if (!empty($errors)): ?>
                 <div class="mt-4 text-red-500">
                     <?php foreach ($errors as $error): ?>
-                        <?php include('../../../constant/alerts.php'); ?>
+                        <p><?php echo htmlspecialchars($error); ?></p>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
             <?php if (!empty($success)): ?>
-                <?php include('../../../constant/alerts.php'); ?>
+                <div class="mt-4 text-green-500">
+                    <p><?php echo htmlspecialchars($success); ?></p>
+                </div>
             <?php endif; ?>
         </div>
 
@@ -205,7 +221,7 @@
                                     echo "<td class='py-2 truncate px-4 border-b text-center text-[10px] font-semibold uppercase border-gray-200 $statusClass'>" . htmlspecialchars($row['status']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_price']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['booking_date']) . "</td>";
-                                    echo "<td title='Not Wokring' class='py-2 cursor-pointer bg-red-600 text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Cancel Ticket</td>";
+                                    echo "<td title='Not Working' class='py-2 cursor-pointer bg-red-600 text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Cancel Ticket</td>";
                                     echo "</tr>";
                                 }
                             } else {
