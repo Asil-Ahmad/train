@@ -20,7 +20,7 @@
     ?>
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
-        <div class="w-full min-w-md bg-white rounded-xl shadow-2xl p-8">
+        <div class="w-[35%] min-w-md bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Add Route</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>
@@ -93,8 +93,8 @@
             include('../../../constant/alerts.php');
             ?>
         </div>
-        <div class="flex flex-1 justify-center items-center px-4 ">
-            <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-8">
+        <div class="w-[65%] flex flex-1 justify-center items-center px-4 ">
+            <div class="w-full bg-white rounded-xl shadow-2xl p-8">
                 <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Routes</h2>
                 <form method="GET" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                     <div class="mb-4">
@@ -114,14 +114,14 @@
                         Filter Routes
                     </button>
                 </form>
-                <table class="min-w-full bg-white mt-6">
+                <table class="w-full bg-white mt-6 overflow-x-scroll  ">
                     <thead>
                         <tr class="truncate">
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider ">Train Name</th>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Station Name</th>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Station Order</th>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Distance(km)</th>
-                            <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
+                            <th class="py-2 px-1 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider ">Train Name</th>
+                            <th class="py-2 px-1 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Station Name</th>
+                            <th class="py-2 px-1 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Station Order</th>
+                            <th class="py-2 px-1 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Distance(km)</th>
+                            <th class="py-2 px-1 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Edit</th>
                         </tr>
                     </thead>
                     <tbody class="text-sm ">
@@ -139,11 +139,11 @@
                         if (mysqli_num_rows($result) > 0 ) {
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200 truncate '>" . htmlspecialchars($row['train_name']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200 truncate'>" . htmlspecialchars($row['station_name']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['station_order']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200'>" . htmlspecialchars($row['distance_from_previous_station']) . "</td>";
-                                echo "<td class='py-2 px-4 border-b border-gray-200 flex gap-2'>
+                                echo "<td class='py-2 px-1 border-b border-gray-200 truncate '>" . htmlspecialchars($row['train_name']) . "</td>";
+                                echo "<td class='py-2 px-1 border-b border-gray-200 truncate'>" . htmlspecialchars($row['station_name']) . "</td>";
+                                echo "<td class='py-2 px-1 border-b border-gray-200'>" . htmlspecialchars($row['station_order']) . "</td>";
+                                echo "<td class='py-2 px-1 border-b border-gray-200'>" . htmlspecialchars($row['distance_from_previous_station']) . "</td>";
+                                echo "<td class='py-2 px-1 border-b border-gray-200 flex gap-2'>
                                 <a href='EditRoute.php?id=" . $row['route_id'] . "' class='bg-[#2E7D32] text-white hover:bg-green-700 px-2 py-0.5 font-medium'>Edit</a>
                                 <a href='DeleteRoute.php?id=" . $row['route_id'] . "' class='text-white bg-[#D32F2F] hover:bg-red-700 px-2 py-0.5 font-medium'>Delete</a>
                                 </td>";

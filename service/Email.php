@@ -1,8 +1,12 @@
 <?php
 // Include PHPMailer files
-require '../phpmailer/src/PHPMailer.php';
-require '../phpmailer/src/SMTP.php';
-require '../phpmailer/src/Exception.php';
+require './src/PHPMailer.php';
+require './src/SMTP.php';
+require './src/Exception.php';
+
+// Import PHPMailer classes into the global namespace
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 // Load environment variables
 $env = parse_ini_file(__DIR__ . '/.env');
@@ -15,16 +19,17 @@ function sendEmail($toEmail, $subject, $body)
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host = $env['SMTP_HOST'];
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = $env['SMTP_USER'];
-        $mail->Password = $env['SMTP_PASS'];
+        $mail->Username = 'asil.infoseek@gmail.com';
+        $mail->Password = 'tkqmrgkufgvxrgfe';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = $env['SMTP_PORT'];
+        $mail->Port = 587;
 
         // Recipients
-        $mail->setFrom($env['SMTP_USER'], 'Your Name');
-        $mail->addAddress($toEmail);
+        $toEmail = filter_var($toEmail, FILTER_SANITIZE_EMAIL);
+        $mail->setFrom('asil.infoseek@gmail.com', 'Asil');
+        $mail->addAddress('asil.infoseek@gmail.com');
 
         // Content
         $mail->isHTML(true);

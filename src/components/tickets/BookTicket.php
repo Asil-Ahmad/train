@@ -221,7 +221,7 @@
                                     echo "<td class='py-2 truncate px-4 border-b text-center text-[10px] font-semibold uppercase border-gray-200 $statusClass'>" . htmlspecialchars($row['status']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_price']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['booking_date']) . "</td>";
-                                    echo "<td title='Not Working' class='py-2 cursor-pointer bg-red-600 text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Cancel Ticket</td>";
+                                    echo "<td title='Not Working' class='py-2 cursor-pointer bg-green-600  text-center text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Print Ticket</td>";
                                     echo "</tr>";
                                 }
                             } else {
