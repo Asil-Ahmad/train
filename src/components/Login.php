@@ -103,20 +103,23 @@
                             $_SESSION['user_role'] = $user['role'];
                             $_SESSION['user_email'] = $user['email'];
 
-                            echo $user['email'];
 
-                            $toEmail = $user['email'];
-                            $subject = 'BookMyTrain';
-                            $body = 'You have successfully logged in to BookMyTrain.';
-                            
+                            header("Location: /train/index.php");
+                            exit();
+                            // echo $user['email'];
+                            //todo send email only if its admin
+                            // $toEmail = $user['email'];
+                            // $subject = 'BookMyTrain';
+                            // $body = 'You have successfully logged in to BookMyTrain.';
 
-                            if (sendEmail($toEmail, $subject, $body)) {
-                                echo 'Email sent successfully.';
-                                header("Location: /train/index.php");
-                                exit();
-                            } else {
-                                echo 'Failed to send email.';
-                            }
+
+                            // if (sendEmail($toEmail, $subject, $body)) {
+                            //     echo 'Email sent successfully.';
+                            //     header("Location: /train/index.php");
+                            //     exit();
+                            // } else {
+                            //     echo 'Failed to send email.';
+                            // }
                         } else {
                             $err = "Invalid email or password";
                         }

@@ -5,6 +5,7 @@
     include('../../../constant/sidebar.php');
     include('../../../config/database.php'); // Ensure this file defines $db_server, $db_user, $db_password, and $db_name
 
+
     // Check if user is admin
     $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
     $userId = $_SESSION['user_id'];
@@ -250,7 +251,7 @@
                                     </svg>
                                     <span class="text-sm text-gray-600">Passenger</span>
                                 </div>
-                                <p class="font-semibold mt-1">${ticket.email}</p>
+                                <p class="text-xs font-semibold mt-1">${ticket.email}</p>
                             </div>
                             <div>
                                 <div class="flex items-center">
@@ -259,7 +260,7 @@
                                     </svg>
                                     <span class="text-sm text-gray-600">Train</span>
                                 </div>
-                                <p class="font-semibold mt-1">${ticket.train_name}</p>
+                                <p class="text-xs font-semibold mt-1">${ticket.train_name}</p>
                             </div>
                         </div>
                     </div>
@@ -339,6 +340,8 @@
             closeTicketPreview();
         }
     </script>
+
+    
 
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
