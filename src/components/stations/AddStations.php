@@ -14,7 +14,7 @@
 
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
-        <div class="w-full max-w-[410px] max-h-[624px] bg-white rounded-xl shadow-2xl p-8 ">
+        <div class="w-[35%] bg-white rounded-xl shadow-2xl p-8 ">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Add Station</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>
@@ -81,10 +81,10 @@
             include('../../../constant/alerts.php');
             ?>
         </div>
-        <div class="flex flex-1 justify-center items-center px-4 ">
-            <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-8">
+        <div class="flex flex-1  items-center px-4 ">
+            <div class="w-full  bg-white rounded-xl shadow-2xl p-8">
                 <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Stations</h2>
-                <table class="min-w-full bg-white">
+                <table class=" bg-white">
                     <thead>
                         <tr>
                             <th class="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Station Code</th>

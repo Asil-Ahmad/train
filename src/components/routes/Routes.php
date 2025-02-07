@@ -20,7 +20,7 @@
     ?>
     <!-- Main Content Wrapper -->
     <div class="flex items-start px-4">
-        <div class="w-[35%] min-w-md bg-white rounded-xl shadow-2xl p-8">
+        <div class="w-[25%] min-w-md bg-white rounded-xl shadow-2xl p-8">
             <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">Add Route</h2>
             <form class="space-y-6" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                 <div>
@@ -93,7 +93,7 @@
             include('../../../constant/alerts.php');
             ?>
         </div>
-        <div class="w-[65%] flex flex-1 justify-center items-center px-4 ">
+        <div class="w-[75%] flex flex-1 justify-center items-center px-4 ">
             <div class="w-full bg-white rounded-xl shadow-2xl p-8">
                 <h2 class="text-xl font-bold mb-6 text-gray-800 text-center">List of Routes</h2>
                 <form method="GET" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
