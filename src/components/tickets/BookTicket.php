@@ -171,15 +171,10 @@
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Status</th>
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Total Price</th>
                                 <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Booking Date</th>
+                                <th class="py-2  px-4 border-b-2 border-gray-200 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm">
-                            <!-- $sql = "SELECT b.booking_id, u.username, u.email, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
-                            FROM bookings b
-                            JOIN users u ON b.user_id = u.user_id
-                            JOIN trains tr ON b.train_id = tr.train_id
-                            JOIN stations s1 ON b.start_station_id = s1.station_id
-                            JOIN stations s2 ON b.end_station_id = s2.station_id"; -->
+                        <tbody class="text-sm gap-2">
                             <?php
                             if ($isAdmin) {
                                 $sql = "SELECT b.booking_id, u.email, b.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
@@ -189,9 +184,10 @@
                                                          JOIN stations s1 ON b.start_station_id = s1.station_id
                                                          JOIN stations s2 ON b.end_station_id = s2.station_id";
                             } else {
-                                $sql = "SELECT b.booking_id, b.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
+                                $sql = "SELECT b.booking_id,u.email, b.user_id, tr.train_name, s1.station_name AS start_station_name, s2.station_name AS end_station_name, b.number_of_seats, b.total_price, b.booking_date, b.status 
                                                          FROM bookings b
                                                          JOIN trains tr ON b.train_id = tr.train_id
+                                                        JOIN users u ON b.user_id = u.user_id
                                                          JOIN stations s1 ON b.start_station_id = s1.station_id
                                                          JOIN stations s2 ON b.end_station_id = s2.station_id
                                                          WHERE b.user_id = $userId";
@@ -209,6 +205,7 @@
                                     echo "<td class='py-2 truncate px-4 border-b text-center text-[10px] font-semibold uppercase border-gray-200 $statusClass'>" . htmlspecialchars($row['status']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['total_price']) . "</td>";
                                     echo "<td class='py-2 truncate px-4 border-b border-gray-200'>" . htmlspecialchars($row['booking_date']) . "</td>";
+                                    echo "<td class='py-2 bg-red-600 text-[10px] rounded-lg text-white truncate px-4 border-b border-gray-200'>Cancel Ticket</td>";
                                     echo "</tr>";
                                 }
                             } else {
